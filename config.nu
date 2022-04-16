@@ -59,6 +59,10 @@ alias la = (ls -a | grid -c)
 
 let ad = 'C:\Users\jon\AppData\Roaming'
 alias ad = cd $ad
+alias pwd = $env.PWD
+alias cwd = $env.PWD
+alias m = micro
+alias lsa = ls -a
 
 # def pointers [string] { echo $string | str find-replace -a "\(" "!(" | str find-replace -a 0x !0x | split row ! | table -n 1 }
 
