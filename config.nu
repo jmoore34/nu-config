@@ -4,7 +4,7 @@ let $config = {
   use_ls_colors: true
   use_grid_icons: true
   footer_mode: "10" #always, never, number_of_rows, auto
-  animate_prompt: true
+  animate_prompt: ((sys).host.name == "Windows")
   quick_completions: false
   keybindings: [
     {
