@@ -54,7 +54,7 @@ def-env which-cd [program] { which $program | get path | path dirname | str trim
 def-env which-open [program] { which ($program) | get path | path dirname | explorer $in }
 
 alias l = (ls | grid -c)
-alias ll = (ls -l | grid -c)
+alias ll = (ls -l)
 alias la = (ls -a | grid -c)
 
 let ad = 'C:\Users\jon\AppData\Roaming'
