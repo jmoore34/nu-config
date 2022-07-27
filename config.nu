@@ -1,10 +1,13 @@
-let $config = {
+let-env config = {
+  history_file_format: "sqlite"
+  completion_algorithm: "fuzzy"
+  buffer_editor: "micro"
   filesize_metric: true
   table_mode: rounded # basic, compact, compact_double, light, thin, with_love, rounded, reinforced, heavy, none, other
   use_ls_colors: true
   use_grid_icons: true
   footer_mode: "10" #always, never, number_of_rows, auto
-  animate_prompt: ((sys).host.name == "Windows")
+  animate_prompt: false
   quick_completions: false
   keybindings: [
     {
@@ -46,6 +49,15 @@ let $config = {
             { edit: cutCurrentLine }
         ]
     }
+    {
+        name: newline
+        modifier: shift
+        keycode: Enter
+        mode: emacs
+        event: [
+            { edit: InsertNewline }
+        ]
+    }
   ]
 }
 
@@ -63,11 +75,12 @@ alias pwd = $env.PWD
 alias cwd = $env.PWD
 alias m = micro
 alias lsa = ls -a
+alias venv = py -m virtualenv
 
 # def pointers [string] { echo $string | str find-replace -a "\(" "!(" | str find-replace -a 0x !0x | split row ! | table -n 1 }
 
 # def s [sec] {shutdown -a | ignore; shutdown -s -t ($sec | into string)}
-alias s = ^py C:\Users\jon\PycharmProjects\ShutdownScheduler\main.py
+alias s = py C:\Users\jon\PycharmProjects\ShutdownScheduler\main.py
 
 alias sc = swiftc.cmd
 
@@ -105,6 +118,12 @@ def count-multi [] {
     $counts | insert percentage { |row| $row.count / $len * 100 | into string -d 1 | $"($in)%" }
 }
 
+def deltas [] {
+    $in | prepend 0 | window 2 | each {
+        |x| echo {cumulative: $x.1, delta: ($x.1 - $x.0)}
+    }
+}
+
 def count-format [] {
     each { |row| $"($row.value): ($row.count) (char lp)($row.percentage)(char rp)" } | str collect (char nl) 
 }
@@ -121,6 +140,8 @@ def-env goto [] {
 }
 
 alias rc = code.cmd ($nu.config-path | into string)
+alias su = sudo nu
+alias which = which -a
 
 alias e = explorer
 alias e. = explorer .
@@ -140,14 +161,8 @@ let-env STARSHIP_SHELL = "nu"
 # let-env PROMPT_COMMAND = { starship prompt }
 let-env PROMPT_COMMAND = { starship prompt --cmd-duration $env.CMD_DURATION_MS $'--status=($env.LAST_EXIT_CODE)' }
 
+let-env PROMPT_COMMAND_RIGHT = {""}
 
-hide PROMPT_COMMAND_RIGHT
-# let-env PROMPT_COMMAND_RIGHT = {
-#     $"(ansi green)(date format %c)"
-# }
-
-# use 'C:\Users\jon\AppData\Roaming\nushell\nu_scripts\prompt\oh-my.nu' git_prompt
-# let-env PROMPT_COMMAND = { (git_prompt).left_prompt }
-# let-env PROMPT_COMMAND_RIGHT = { (git_prompt).right_prompt }
-
-# let-env PROMPT_COMMAND = { oh-my-posh prompt print primary }
+use custom-completions/cargo/cargo-completions.nu *
+use custom-completions/yarn/yarn-completion.nu *
+use custom-completions/git/git-completions.nu *
