@@ -7,7 +7,6 @@ let-env config = {
   use_ls_colors: true
   use_grid_icons: true
   footer_mode: "10" #always, never, number_of_rows, auto
-  animate_prompt: false
   quick_completions: false
   keybindings: [
     {
