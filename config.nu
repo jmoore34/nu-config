@@ -151,6 +151,10 @@ alias qq = start "C:\Program Files\Qalculate\qalculate.exe"
 alias qqq = start "C:\Program Files\Qalculate\qalculate-qt.exe"
 alias f = fend
 
+# termux
+alias lolcat = golor
+alias r = golor
+
 alias dog = dog -n 1.1.1.1
 
 let-env PROMPT_INDICATOR = " "
