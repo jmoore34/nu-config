@@ -75,6 +75,7 @@ alias cwd = $env.PWD
 alias m = micro
 alias lsa = ls -a
 alias venv = py -m virtualenv
+alias p = pnpm
 
 # def pointers [string] { echo $string | str find-replace -a "\(" "!(" | str find-replace -a 0x !0x | split row ! | table -n 1 }
 
@@ -138,7 +139,13 @@ def-env goto [] {
     )
 }
 
-alias rc = code.cmd ($nu.config-path | into string)
+def to-linux-path [] {
+    $in
+    | str replace 'C:' '/mnt/c' -n
+    | str replace '\\' '/' -a -n
+}
+
+alias rc = code $nu.config-path
 alias su = sudo nu
 alias which = which -a
 
@@ -167,5 +174,7 @@ let-env PROMPT_COMMAND = { starship prompt --cmd-duration $env.CMD_DURATION_MS $
 let-env PROMPT_COMMAND_RIGHT = {""}
 
 use custom-completions/cargo/cargo-completions.nu *
-use custom-completions/yarn/yarn-completion.nu *
+# use custom-completions/yarn/yarn-completion.nu *
 use custom-completions/git/git-completions.nu *
+
+alias mp3-dl = youtube-dl --audio-format mp3 -x
