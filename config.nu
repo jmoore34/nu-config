@@ -147,7 +147,7 @@ def to-linux-path [] {
     | str replace '\\' '/' -a -n
 }
 
-alias rc = code $nu.config-path
+alias rc = (code $nu.config-path | path dirname)
 alias su = sudo nu
 alias which = which -a
 
@@ -180,3 +180,6 @@ use custom-completions/cargo/cargo-completions.nu *
 use custom-completions/git/git-completions.nu *
 
 alias mp3-dl = youtube-dl --audio-format mp3 -x
+
+use banner.nu
+banner show_banner
