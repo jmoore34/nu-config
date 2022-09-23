@@ -1,4 +1,5 @@
 let-env config = {
+  show_banner: false
   history_file_format: "sqlite"
   completion_algorithm: "fuzzy"
   buffer_editor: "micro"
@@ -76,6 +77,7 @@ alias m = micro
 alias lsa = ls -a
 alias venv = py -m virtualenv
 alias p = pnpm
+alias c. = code .
 
 # def pointers [string] { echo $string | str find-replace -a "\(" "!(" | str find-replace -a 0x !0x | split row ! | table -n 1 }
 
