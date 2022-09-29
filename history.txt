@@ -1,0 +1,15 @@
+.config/nushell/
+l
+git clone https://github.com/nushell/nu-scripts.git nu-scripts
+git clone https://github.com/nushell/nu_scripts.git nu-scripts
+nu
+source ~/.config/nushell/env.nu
+source ~/.config/nushell/config.nu
+which cod
+which code
+code .config/nushell
+micro /usr/share/code/resources/app/product.json
+code /usr/share/code/resources/app/product.json
+code .config/nushell
+source ~/.config/nushell/config.nu
+sudo code /usr/share/code/resources/app/product.json

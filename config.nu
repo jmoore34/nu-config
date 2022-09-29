@@ -151,9 +151,15 @@ alias rc = (code $nu.config-path | path dirname)
 alias su = sudo nu
 alias which = which -a
 
-alias e = explorer
-alias e. = explorer .
-alias ein = explorer $in
+def e [...args] {
+    if $nu.os-info.kernel_version ends-with MANJARO {
+        exo-open --launch FileManager $args
+    } else {
+        explorer $args
+    }
+}
+alias e. = e .
+alias ein = e $in
 
 alias q = ^"C:\Program Files\Qalculate\qalc.exe"
 alias qq = start "C:\Program Files\Qalculate\qalculate.exe"
