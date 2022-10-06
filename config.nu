@@ -147,6 +147,15 @@ def to-linux-path [] {
     | str replace '\\' '/' -a -n
 }
 
+def boost [] {
+    ls 
+    | find --invert boosted
+    | each { |f|
+        let new_name = ($f.name | str replace .mp4 .boosted.mp4)
+        ffmpeg -i $f.name -vcodec copy -af "volume=30dB" $new_name; rm $f.name
+    }
+}
+
 alias rc = (code $nu.config-path | path dirname)
 alias su = sudo nu
 alias which = which -a
