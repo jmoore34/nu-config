@@ -1,4 +1,9 @@
+let carapace_completer = {|spans|
+  carapace $spans.0 nushell $spans | from json
+}
+
 let-env config = {
+  external_completer: $carapace_completer
   show_banner: false
   history_file_format: "sqlite"
   completion_algorithm: "fuzzy"
@@ -127,7 +132,7 @@ def deltas [] {
 }
 
 def count-format [] {
-    each { |row| $"($row.value): ($row.count) (char lp)($row.percentage)(char rp)" } | str collect (char nl) 
+    each { |row| $"($row.value): ($row.count) (char lp)($row.percentage)(char rp)" } | str collect (char nl)
 }
 
 def-env goto [] {
@@ -148,7 +153,7 @@ def to-linux-path [] {
 }
 
 def boost [] {
-    ls 
+    ls *.mp4
     | find --invert boosted
     | each { |f|
         let new_name = ($f.name | str replace .mp4 .boosted.mp4)
