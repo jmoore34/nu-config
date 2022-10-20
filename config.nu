@@ -195,10 +195,6 @@ let-env PROMPT_COMMAND = { starship prompt --cmd-duration $env.CMD_DURATION_MS $
 
 let-env PROMPT_COMMAND_RIGHT = {""}
 
-use custom-completions/cargo/cargo-completions.nu *
-# use custom-completions/yarn/yarn-completion.nu *
-use custom-completions/git/git-completions.nu *
-
 alias mp3-dl = youtube-dl --audio-format mp3 -x
 
 use banner.nu
