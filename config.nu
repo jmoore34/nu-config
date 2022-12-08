@@ -2,6 +2,10 @@ let carapace_completer = {|spans|
   carapace $spans.0 nushell $spans | from json
 }
 
+alias l = (ls | grid -c)
+alias ll = (ls -l)
+alias la = (ls -a | grid -c)
+
 let-env config = {
     ls: {
         use_ls_colors: true
@@ -93,6 +97,17 @@ let-env config = {
             ]
         }
     ]
+    hooks: {
+        env_change: {
+            PWD: [
+                { |before, after|
+                    if $before != $nothing {
+                        print (l) -n
+                    }
+                }
+            ]
+        }
+    }
     buffer_editor: "micro"
     footer_mode: "auto" # always, never, number_of_rows, auto
     use_grid_icons: true
@@ -102,9 +117,6 @@ def-env which-cd [program] { which $program | get path | path dirname | str trim
 
 def-env which-open [program] { which ($program) | get path | path dirname | explorer $in }
 
-alias l = (ls | grid -c)
-alias ll = (ls -l)
-alias la = (ls -a | grid -c)
 
 let ad = 'C:\Users\jon\AppData\Roaming'
 alias ad = cd $ad
