@@ -3,67 +3,99 @@ let carapace_completer = {|spans|
 }
 
 let-env config = {
-  external_completer: $carapace_completer
-  show_banner: false
-  history_file_format: "sqlite"
-  completion_algorithm: "fuzzy"
-  buffer_editor: "micro"
-  filesize_metric: true
-  table_mode: rounded # basic, compact, compact_double, light, thin, with_love, rounded, reinforced, heavy, none, other
-  use_ls_colors: true
-  use_grid_icons: true
-  footer_mode: "10" #always, never, number_of_rows, auto
-  quick_completions: false
-  keybindings: [
-    {
-      name: complete_in_cd
-      modifier: control
-      keycode: char_s
-      mode: emacs
-      event: [
-          { edit: clear }
-          { edit: insertString value: "./" }
-          { send: Menu name: completion_menu }
-      ]
+    ls: {
+        use_ls_colors: true
+        clickable_links: true
     }
-    {
-        name: backspace_word
-        modifier: control
-        keycode: Backspace
-        mode: emacs
-        event: [
-              { edit: BackspaceWord  }
-        ]
+    rm: {
+        always_trash: true
     }
-    {
-        name: reload_config
-        modifier: alt
-        keycode: char_p
-        mode: emacs
-        event: {
-          send: executehostcommand,
-          cmd: $"source '($nu.config-path)'"
+    cd: {
+        abbreviations: true
+    }
+    table: {
+        mode: rounded # basic, compact, compact_double, light, thin, with_love, rounded, reinforced, heavy, none, other
+        index_mode: always # "always" show indexes, "never" show indexes, "auto" = show indexes when a table has "index" column
+        trim: {
+            methodology: wrapping # wrapping or truncating
+            wrapping_try_keep_words: true # A strategy used by the 'wrapping' methodology
+            truncating_suffix: "..." # A suffix used by the 'truncating' methodology
         }
     }
-    {
-        name: cut_line
-        modifier: control
-        keycode: char_k
-        mode: emacs
-        event: [
-            { edit: cutCurrentLine }
-        ]
+    history: {
+        max_size: 10000 # Session has to be reloaded for this to take effect
+        sync_on_enter: true # Enable to share history between multiple sessions, else you have to close the session to write history to file
+        file_format: "plaintext"
     }
-    {
-        name: newline
-        modifier: shift
-        keycode: Enter
-        mode: emacs
-        event: [
-            { edit: InsertNewline }
-        ]
+    completions: {
+        case_sensitive: false
+        quick: false  # set this to false to prevent auto-selecting completions when only one remains
+        partial: true  # set this to false to prevent partial filling of the prompt
+        algorithm: "fuzzy"  # prefix or fuzzy
+        external: {
+            enable: true # set to false to prevent nushell looking into $env.PATH to find more suggestions, `false` recommended for WSL users as this look up my be very slow
+            max_results: 100 # setting it lower can improve completion performance at the cost of omitting some options
+            completer: $carapace_completer
+        }
     }
-  ]
+    filesize: {
+        metric: true
+        format: "auto"
+    }
+    show_banner: false
+    keybindings: [
+        {
+          name: complete_in_cd
+          modifier: control
+          keycode: char_s
+          mode: emacs
+          event: [
+              { edit: clear }
+              { edit: insertString value: "./" }
+              { send: Menu name: completion_menu }
+          ]
+        }
+        {
+            name: backspace_word
+            modifier: control
+            keycode: Backspace
+            mode: emacs
+            event: [
+                  { edit: BackspaceWord  }
+            ]
+        }
+        {
+            name: reload_config
+            modifier: alt
+            keycode: char_p
+            mode: emacs
+            event: {
+              send: executehostcommand,
+              cmd: $"source '($nu.config-path)'"
+            }
+        }
+        {
+            name: cut_line
+            modifier: control
+            keycode: char_k
+            mode: emacs
+            event: [
+                { edit: cutCurrentLine }
+            ]
+        }
+        {
+            name: newline
+            modifier: shift
+            keycode: Enter
+            mode: emacs
+            event: [
+                { edit: InsertNewline }
+            ]
+        }
+    ]
+    buffer_editor: "micro"
+    footer_mode: "auto" # always, never, number_of_rows, auto
+    use_grid_icons: true
 }
 
 def-env which-cd [program] { which $program | get path | path dirname | str trim | each { |path| cd $path } }
@@ -83,6 +115,7 @@ alias lsa = ls -a
 alias venv = py -m virtualenv
 alias p = pnpm
 alias c. = code .
+alias "scoop search" = scoop-search
 
 # def pointers [string] { echo $string | str find-replace -a "\(" "!(" | str find-replace -a 0x !0x | split row ! | table -n 1 }
 
