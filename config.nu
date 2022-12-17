@@ -107,6 +107,9 @@ let-env config = {
                 }
             ]
         }
+        display_output: {
+            if (term size).columns >= 80 { table -e } else { table }
+        }
     }
     buffer_editor: "micro"
     footer_mode: "auto" # always, never, number_of_rows, auto
