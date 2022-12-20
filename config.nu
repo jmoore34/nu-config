@@ -222,6 +222,7 @@ def e [...args] {
 }
 alias e. = e .
 alias ein = e $in
+alias x = explore
 
 alias q = ^"C:\Program Files\Qalculate\qalc.exe"
 alias qq = start "C:\Program Files\Qalculate\qalculate.exe"
