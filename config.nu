@@ -29,7 +29,7 @@ let-env config = {
     history: {
         max_size: 10000 # Session has to be reloaded for this to take effect
         sync_on_enter: true # Enable to share history between multiple sessions, else you have to close the session to write history to file
-        file_format: "plaintext"
+        file_format: "sqlite"
     }
     completions: {
         case_sensitive: false
@@ -247,3 +247,7 @@ alias mp3-dl = youtube-dl --audio-format mp3 -x
 
 use banner.nu
 banner show_banner
+
+# work
+let-env PROJECT_DIR = '/Users/m361234/chedr-core'
+let-env GITHUB_USER = 'jon'
