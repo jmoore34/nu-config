@@ -131,8 +131,8 @@ def-env which-open [program] { which ($program) | get path | path dirname | expl
 
 let ad = 'C:/Users/jon/AppData/Roaming'
 alias ad = cd $ad
-alias pwd = $env.PWD
-alias cwd = $env.PWD
+alias pwd = echo $env.PWD
+alias cwd = echo $env.PWD
 alias m = micro
 alias lsa = ls -a
 alias venv = py -m virtualenv
@@ -177,7 +177,7 @@ def count [] {
 
 def count-multi [] {
     let input = $in
-    let counts = ($input | str collect ";" | split row ';' | uniq -c | flatten)
+    let counts = ($input | str join ";" | split row ';' | uniq -c | flatten)
     let len = ($input | length)
     $counts | insert percentage { |row| $row.count / $len * 100 | into string -d 1 | $"($in)%" }
 }
@@ -189,7 +189,7 @@ def deltas [] {
 }
 
 def count-format [] {
-    each { |row| $"($row.value): ($row.count) (char lp)($row.percentage)(char rp)" } | str collect (char nl)
+    each { |row| $"($row.value): ($row.count) (char lp)($row.percentage)(char rp)" } | str join (char nl)
 }
 
 def-env goto [] {
@@ -345,6 +345,8 @@ alias pl = e $env.plugins
 
 
 # work
-let-env PROJECT_DIR = '/Users/m361234/chedr-core'
-let-env GITHUB_USER = 'jon'
-$env.PATH ++= [/Users/m361234/.ghcup/bin]
+if $nu.os-info.name != windows {
+    let-env PROJECT_DIR = '/Users/m361234/chedr-core'
+    let-env GITHUB_USER = 'jon'
+    $env.PATH ++= [/Users/m361234/.ghcup/bin]
+}
