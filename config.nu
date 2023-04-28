@@ -2,7 +2,16 @@ let carapace_completer = {|spans|
   carapace $spans.0 nushell $spans | from json
 }
 
+def debug-cleanup-hs [] {
+    ls **/*.hs
+    | each { |file|
+        print $"(ansi cyan)Cleaning (ansi yellow)($file.name)"
+        let cleaned = (rg -vF 'TODO: remove print debugging' $file.name) + "\n"
+        $cleaned | save --force $file.name
+    }
+}
 alias c = git checkout
+alias cc = cd /Users/m361234/chedr-core
 alias ll = ls -l
 def l [] { ls | grid -c }
 def la [] { ls -a | grid -c }
@@ -115,7 +124,7 @@ let-env config = {
                 }
             ]
         }
-        display_output: {
+        display_output: { ||
             if (term size).columns >= 80 { table -e } else { table }
         }
     }
@@ -151,16 +160,6 @@ def-env mcd [path] {
     cd $path
 }
 
-# Repeat a string a number of times
-def "str repeat" [
-    count: int # The number of times to repeat the string
-    ] {
-        let input = $in
-        for $i in 1..=count {
-            echo $input
-        }
-    }
-
 def ssh-save [server] {
     open ~\.ssh\id_ecdsa.pub | ssh ($server) "(mkdir ~/.ssh; touch ~/.ssh/authorized_keys; cat >> ~/.ssh/authorized_keys)"
 }
@@ -173,7 +172,7 @@ def count [] {
 
 def count-multi [] {
     let input = $in
-    let counts = ($input | str collect ";" | split row ';' | uniq -c | flatten)
+    let counts = ($input | str join ";" | split row ';' | uniq -c | flatten)
     let len = ($input | length)
     $counts | insert percentage { |row| $row.count / $len * 100 | into string -d 1 | $"($in)%" }
 }
@@ -185,7 +184,7 @@ def deltas [] {
 }
 
 def count-format [] {
-    each { |row| $"($row.value): ($row.count) (char lp)($row.percentage)(char rp)" } | str collect (char nl)
+    each { |row| $"($row.value): ($row.count) (char lp)($row.percentage)(char rp)" } | str join (char nl)
 }
 
 def-env goto [] {
@@ -214,7 +213,9 @@ def boost [] {
     }
 }
 
-alias rc = (code $nu.config-path | path dirname)
+def rc [] {
+    code $nu.config-path | path dirname
+}
 alias su = sudo nu
 
 def e [...args] {
@@ -237,9 +238,9 @@ let-env PROMPT_INDICATOR = " "
 
 let-env STARSHIP_SESSION_KEY = (random chars -l 16)
 let-env STARSHIP_SHELL = "nu"
-let-env PROMPT_COMMAND = { starship prompt --cmd-duration $env.CMD_DURATION_MS $'--status=($env.LAST_EXIT_CODE)' }
+let-env PROMPT_COMMAND = { || starship prompt --cmd-duration $env.CMD_DURATION_MS $'--status=($env.LAST_EXIT_CODE)' }
 
-let-env PROMPT_COMMAND_RIGHT = {""}
+let-env PROMPT_COMMAND_RIGHT = ""
 
 alias mp3-dl = youtube-dl --audio-format mp3 -x
 
