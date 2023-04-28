@@ -138,22 +138,26 @@ def-env which-cd [program] { which $program | get path | path dirname | str trim
 def-env which-open [program] { which ($program) | get path | path dirname | explorer $in }
 
 
-let ad = 'C:\Users\jon\AppData\Roaming'
+let ad = 'C:/Users/jon/AppData/Roaming'
 alias ad = cd $ad
-alias pwd = $env.PWD
-alias cwd = $env.PWD
+alias pwd = echo $env.PWD
+alias cwd = echo $env.PWD
 alias m = micro
 alias lsa = ls -a
 alias venv = py -m virtualenv
 alias p = pnpm
+alias c = code
 alias c. = code .
 alias "scoop search" = scoop-search
-
-# def pointers [string] { echo $string | str find-replace -a "\(" "!(" | str find-replace -a 0x !0x | split row ! | table -n 1 }
+alias cr = cargo run
+alias cb = cargo build
+alias ct = cargo test
+# def pointers [string] { echo $string | str find-replace -a "/(" "!(" | str find-replace -a 0x !0x | split row ! | table -n 1 }
 
 # def s [sec] {shutdown -a | ignore; shutdown -s -t ($sec | into string)}
 
 alias r = cargo r
+alias re = cd ~/repos
 
 def-env mcd [path] {
     mkdir $path
@@ -161,7 +165,7 @@ def-env mcd [path] {
 }
 
 def ssh-save [server] {
-    open ~\.ssh\id_ecdsa.pub | ssh ($server) "(mkdir ~/.ssh; touch ~/.ssh/authorized_keys; cat >> ~/.ssh/authorized_keys)"
+    open ~/.ssh/id_ecdsa.pub | ssh ($server) "(mkdir ~/.ssh; touch ~/.ssh/authorized_keys; cat >> ~/.ssh/authorized_keys)"
 }
 
 def count [] {
@@ -172,6 +176,7 @@ def count [] {
 
 def count-multi [] {
     let input = $in
+    let counts = ($input | str join ";" | split row ';' | uniq -c | flatten)
     let counts = ($input | str join ";" | split row ';' | uniq -c | flatten)
     let len = ($input | length)
     $counts | insert percentage { |row| $row.count / $len * 100 | into string -d 1 | $"($in)%" }
@@ -201,7 +206,7 @@ def-env goto [] {
 def to-linux-path [] {
     $in
     | str replace 'C:' '/mnt/c' -n
-    | str replace '\\' '/' -a -n
+    | str replace '//' '/' -a -n
 }
 
 def boost [] {
@@ -247,7 +252,103 @@ alias mp3-dl = youtube-dl --audio-format mp3 -x
 use banner.nu
 banner show_banner
 
+let plugins = [
+    CTSpecialClasses
+    LateSpawn
+    ModTools
+    SCPReplacer
+    AFKReplacer
+    FunnyPills
+]
+
+let plugin_path = 'C:/Users/jon/AppData/Roaming/EXILED/Plugins'
+let repos_path = 'C:/Users/jon/repos'
+def completions () {
+    $plugins
+}
+
+def deploy (plugin: string@completions, version = "debug") {
+    let version = if $version =~ '[rR].*' { "Release" } else { "Debug" }
+    let path = $'($repos_path)/($plugin)/($plugin)/bin/($version)/($plugin).dll'
+    if ($path | path exists) {
+        mv -f $path $plugin_path
+        print $"(ansi light_green)Deployed ($plugin)(ansi reset)"
+    } else {
+        print ($"(ansi yellow)Skipping ($plugin)(ansi white)")
+    }
+}
+
+
+def "deploy all" (version = "debug") {
+    let version = if $version =~ '[rR].*' { "Release" } else { "Debug" }
+    print $"(ansi light_yellow)Deploying ($version) DLLs (char lp)($version) mode(char rp)(ansi white)"
+    for plugin in $plugins {
+        deploy $plugin $version
+    }
+}
+
+def build (plugin: string@completions, version = "debug") {
+    let version = if $version =~ '[rR].*' { "Release" } else { "Debug" }
+    let path = $'($repos_path)/($plugin)/'
+    cd $path
+    print $"(ansi light_cyan)Building ($plugin)(ansi reset)"
+    dotnet build --verbosity quiet --configuration $version | ignore
+    deploy $plugin $version
+    print ""
+}
+
+def "build all" (version = "debug") {
+    let version = if $version =~ '[rR].*' { "Release" } else { "Debug" }
+    print $"(ansi yellow)Building ($version) DLLs (char lp)($version) mode(char rp)(ansi white)"
+    for plugin in $plugins {
+        build $plugin $version
+    }
+}
+
+def pull (plugin: string@completions, version = "debug") {
+    let version = if $version =~ '[rR].*' { "Release" } else { "Debug" }
+    let path = $'($repos_path)/($plugin)/'
+    cd $path
+    print $"(ansi yellow)Fetching ($plugin)(ansi reset)"
+    do --ignore-errors {
+        git fetch
+    }
+    let status = (git status)
+    if ($status | str contains "Your branch is up to date") {
+        print $"($plugin) is already up to date"
+    } else {
+        git pull | ignore
+        print $"Pulled ($plugin)"
+        build $plugin $version
+    }
+}
+
+def "pull all" (version = "debug") {
+    let version = if $version =~ '[rR].*' { "Release" } else { "Debug" }
+    print $"(ansi light_yellow)Pulling all plugins (char lp)($version) mode(char rp)(ansi white)"
+    for plugin in $plugins {
+        pull $plugin $version
+    }
+}
+
+def build-extension [] {
+  print $"(ansi light_yellow)Building...(ansi reset)"
+  let name = (open src/manifest.json | get name)
+  pnpm build
+  cd dist
+  print "Packaging..."
+  rm *.zip -f
+  7z a $"($name).zip" *.json *.js *.html *.css
+  print $"(ansi light_green)Done!(ansi reset)"
+}
+
+alias r = e ~/repos
+alias pl = e $env.plugins
+
+
 # work
-let-env PROJECT_DIR = '/Users/m361234/chedr-core'
-let-env GITHUB_USER = 'jon'
-$env.PATH ++= [/Users/m361234/.ghcup/bin]
+if $nu.os-info.name != windows {
+    let-env PROJECT_DIR = '/Users/m361234/chedr-core'
+    let-env GITHUB_USER = 'jon'
+    $env.PATH ++= [/Users/m361234/.ghcup/bin]
+}
