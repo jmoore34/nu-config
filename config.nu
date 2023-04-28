@@ -2,9 +2,17 @@ let carapace_completer = {|spans|
   carapace $spans.0 nushell $spans | from json
 }
 
-alias l = (ls | grid -c)
-alias ll = (ls -l)
-alias la = (ls -a | grid -c)
+alias c = git checkout
+alias ll = ls -l
+def l [] { ls | grid -c }
+def la [] { ls -a | grid -c }
+def dps [] { docker ps | from ssv }
+def dls [] { docker image ls | from ssv }
+# Kill all running Docker containers
+def "docker kill-all" [] {
+    docker ps -q | lines | each {|id| docker kill $id}
+}
+alias dka = docker kill-all
 
 let-env config = {
     ls: {
@@ -29,7 +37,7 @@ let-env config = {
     history: {
         max_size: 10000 # Session has to be reloaded for this to take effect
         sync_on_enter: true # Enable to share history between multiple sessions, else you have to close the session to write history to file
-        file_format: "plaintext"
+        file_format: "sqlite"
     }
     completions: {
         case_sensitive: false
@@ -138,9 +146,6 @@ alias ct = cargo test
 # def pointers [string] { echo $string | str find-replace -a "/(" "!(" | str find-replace -a 0x !0x | split row ! | table -n 1 }
 
 # def s [sec] {shutdown -a | ignore; shutdown -s -t ($sec | into string)}
-alias s = py C:/Users/jon/PycharmProjects/ShutdownScheduler/main.py
-
-alias sc = swiftc.cmd
 
 alias r = cargo r
 alias re = cd ~/repos
@@ -215,7 +220,6 @@ def boost [] {
 
 alias rc = code ($nu.config-path | path dirname)
 alias su = sudo nu
-alias which = which -a
 
 def e [...args] {
     if $nu.os-info.kernel_version ends-with MANJARO {
@@ -228,16 +232,10 @@ alias e. = e .
 alias ein = e $in
 alias x = explore
 
-alias q = ^"C:/Program Files/Qalculate/qalc.exe"
-alias qq = start "C:/Program Files/Qalculate/qalculate.exe"
-alias qqq = start "C:/Program Files/Qalculate/qalculate-qt.exe"
 alias f = fend
 
 # termux
 alias lolcat = golor
-alias r = golor
-
-alias dog = dog -n 1.1.1.1
 
 let-env PROMPT_INDICATOR = " "
 
@@ -344,3 +342,9 @@ def build-extension [] {
 
 alias r = e ~/repos
 alias pl = e $env.plugins
+
+
+# work
+let-env PROJECT_DIR = '/Users/m361234/chedr-core'
+let-env GITHUB_USER = 'jon'
+$env.PATH ++= [/Users/m361234/.ghcup/bin]
