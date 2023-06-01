@@ -63,7 +63,7 @@ let-env config = {
           mode: emacs
           event: [
               { edit: clear }
-              { edit: insertString value: "./" }
+              { edit: insertString value: "cd " }
               { send: Menu name: completion_menu }
           ]
         }
