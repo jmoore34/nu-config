@@ -81,7 +81,7 @@ $env.config = {
           mode: emacs
           event: [
               { edit: clear }
-              { edit: insertString value: "./" }
+              { edit: insertString value: "cd " }
               { send: Menu name: completion_menu }
           ]
         }
@@ -328,7 +328,6 @@ def pull (plugin: string@completions, version = "debug") {
     } else {
         git pull | ignore
         print $"Pulled ($plugin)"
-        build $plugin $version
     }
 }
 
@@ -353,7 +352,7 @@ def build-extension [] {
 
 alias r = e ~/repos
 alias pl = e $env.plugins
-
+alias b = nu C:\Users\jon\repos\CTSpecialClasses\build.nu
 use std clip
 
 # work
@@ -364,4 +363,10 @@ if $nu.os-info.name != windows {
         /Users/m361234/.ghcup/bin
         /Users/m361234/.cargo/bin
     ]
+} else {
+    let-env QA_USERNAME = programjminx.24cdefab
+    let-env S1_USERNAME = programjminx.abd0e253
+    let-env S2_USERNAME = programjminx.cfb66d1a
+    let-env S3_USERNAME = programjminx.bb79ef55
+    let-env S4_USERNAME = programjminx.fe3fa5e2
 }
