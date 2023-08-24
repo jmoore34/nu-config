@@ -10,7 +10,16 @@ def debug-cleanup-hs [] {
         $cleaned | save --force $file.name
     }
 }
-alias c = git checkout
+
+def present [md_path: path] {
+    let pdf_path = /tmp/presentation.pdf
+    pandoc -s $md_path -i -o $pdf_path -t beamer -V theme:Malmoe -V aspectratio:169
+    pdfpc $pdf_path
+}
+
+alias co = git checkout
+alias push = git push
+alias pull = git pull
 alias cc = cd /Users/m361234/chedr-core
 alias ll = ls -l
 def l [] { ls | grid -c }
@@ -23,7 +32,7 @@ def "docker kill-all" [] {
 }
 alias dka = docker kill-all
 
-let-env config = {
+$env.config = {
     ls: {
         use_ls_colors: true
         clickable_links: true
@@ -239,13 +248,13 @@ alias f = fend
 # termux
 alias lolcat = golor
 
-let-env PROMPT_INDICATOR = " "
+$env.PROMPT_INDICATOR = " "
 
-let-env STARSHIP_SESSION_KEY = (random chars -l 16)
-let-env STARSHIP_SHELL = "nu"
-let-env PROMPT_COMMAND = { || starship prompt --cmd-duration $env.CMD_DURATION_MS $'--status=($env.LAST_EXIT_CODE)' }
+$env.STARSHIP_SESSION_KEY = (random chars -l 16)
+$env.STARSHIP_SHELL = "nu"
+$env.PROMPT_COMMAND = { || starship prompt --cmd-duration $env.CMD_DURATION_MS $'--status=($env.LAST_EXIT_CODE)' }
 
-let-env PROMPT_COMMAND_RIGHT = ""
+$env.PROMPT_COMMAND_RIGHT = ""
 
 alias mp3-dl = youtube-dl --audio-format mp3 -x
 
@@ -344,12 +353,16 @@ def build-extension [] {
 alias r = e ~/repos
 alias pl = e $env.plugins
 alias b = nu C:\Users\jon\repos\ChaosTheoryPlugins\build.nu
+use std clip
 
 # work
 if $nu.os-info.name != windows {
-    let-env PROJECT_DIR = '/Users/m361234/chedr-core'
-    let-env GITHUB_USER = 'jon'
-    $env.PATH ++= [/Users/m361234/.ghcup/bin]
+    $env.PROJECT_DIR = '/Users/m361234/chedr-core'
+    $env.GITHUB_USER = 'jon'
+    $env.PATH ++= [
+        /Users/m361234/.ghcup/bin
+        /Users/m361234/.cargo/bin
+    ]
 } else {
     let-env QA1_USERNAME = program.b2236bd4
     let-env QA2_USERNAME = program.26b1e36d
