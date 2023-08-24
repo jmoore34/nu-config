@@ -343,7 +343,7 @@ def build-extension [] {
 
 alias r = e ~/repos
 alias pl = e $env.plugins
-alias b = nu C:\Users\jon\repos\CTSpecialClasses\build.nu
+alias b = nu C:\Users\jon\repos\ChaosTheoryPlugins\build.nu
 
 # work
 if $nu.os-info.name != windows {
@@ -351,9 +351,10 @@ if $nu.os-info.name != windows {
     let-env GITHUB_USER = 'jon'
     $env.PATH ++= [/Users/m361234/.ghcup/bin]
 } else {
-    let-env QA_USERNAME = programjminx.24cdefab
-    let-env S1_USERNAME = programjminx.abd0e253
-    let-env S2_USERNAME = programjminx.cfb66d1a
-    let-env S3_USERNAME = programjminx.bb79ef55
-    let-env S4_USERNAME = programjminx.fe3fa5e2
+    let-env QA1_USERNAME = program.b2236bd4
+    let-env QA2_USERNAME = program.26b1e36d
+    let-env S1_USERNAME = program.b8b5e0a8
+    let-env S2_USERNAME = program.f2b28f5a
+    let-env S3_USERNAME = program.004e3121
+    let-env S4_USERNAME = program.331b460e
 }
