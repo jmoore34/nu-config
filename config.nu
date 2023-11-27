@@ -12,7 +12,7 @@ def debug-cleanup-hs [] {
 }
 
 def present [md_path: path] {
-    let pdf_path = /tmp/presentation.pdf
+    let pdf_path = '/tmp/presentation.pdf'
     pandoc -s $md_path -i -o $pdf_path -t beamer -V theme:Malmoe -V aspectratio:169
     pdfpc $pdf_path
 }
