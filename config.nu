@@ -40,9 +40,6 @@ $env.config = {
     rm: {
         always_trash: true
     }
-    cd: {
-        abbreviations: true
-    }
     table: {
         mode: rounded # basic, compact, compact_double, light, thin, with_love, rounded, reinforced, heavy, none, other
         index_mode: always # "always" show indexes, "never" show indexes, "auto" = show indexes when a table has "index" column
@@ -127,7 +124,7 @@ $env.config = {
         env_change: {
             PWD: [
                 { |before, after|
-                    if $before != $nothing {
+                    if $before != null {
                         print (l) -n
                     }
                 }
@@ -157,7 +154,6 @@ alias venv = py -m virtualenv
 alias p = pnpm
 alias c = code
 alias c. = code .
-alias "scoop search" = scoop-search
 alias cr = cargo run
 alias cb = cargo build
 alias ct = cargo test
@@ -179,7 +175,7 @@ def ssh-save [server] {
 
 def count [] {
     let counts = ($in | uniq -c | flatten)
-    let len = ($counts | get count | math sum | into decimal)
+    let len = ($counts | get count | math sum | into float)
     $counts | insert percentage { |row| $row.count / $len * 100 | into string -d 1 | $"($in)%" }
 }
 
@@ -352,7 +348,7 @@ def build-extension [] {
 
 alias r = e ~/repos
 alias pl = e $env.plugins
-alias b = nu C:\Users\jon\repos\CTSpecialClasses\build.nu
+alias b = nu C:\Users\jon\repos\ChaosTheoryPlugins\build.nu
 use std clip
 
 # work
@@ -364,9 +360,13 @@ if $nu.os-info.name != windows {
         /Users/m361234/.cargo/bin
     ]
 } else {
-    let-env QA_USERNAME = programjminx.24cdefab
-    let-env S1_USERNAME = programjminx.abd0e253
-    let-env S2_USERNAME = programjminx.cfb66d1a
-    let-env S3_USERNAME = programjminx.bb79ef55
-    let-env S4_USERNAME = programjminx.fe3fa5e2
+    $env.QA1_USERNAME = program.b2236bd4
+    $env.QA2_USERNAME = program.26b1e36d
+    $env.S1_USERNAME = program.b8b5e0a8
+    $env.S2_USERNAME = program.f2b28f5a
+    $env.S3_USERNAME = program.004e3121
+    $env.S4_USERNAME = program.331b460e
+    $env.S5_USERNAME = program.a0666a9b
+    $env.S6_USERNAME = program.f746c604
+    $env.S7_USERNAME = programjmkds.d164a36f
 }
