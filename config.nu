@@ -359,6 +359,7 @@ if $nu.os-info.name != windows {
         /Users/m361234/.ghcup/bin
         /Users/m361234/.cargo/bin
     ]
+    $env.USE_GKE_GCLOUD_AUTH_PLUGIN = True
 } else {
     $env.QA1_USERNAME = program.b2236bd4
     $env.QA2_USERNAME = program.26b1e36d
