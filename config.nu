@@ -12,7 +12,7 @@ def debug-cleanup-hs [] {
 }
 
 def present [md_path: path] {
-    let pdf_path = /tmp/presentation.pdf
+    let pdf_path = '/tmp/presentation.pdf'
     pandoc -s $md_path -i -o $pdf_path -t beamer -V theme:Malmoe -V aspectratio:169
     pdfpc $pdf_path
 }
@@ -370,6 +370,7 @@ if $nu.os-info.name != windows {
         /Users/m361234/.ghcup/bin
         /Users/m361234/.cargo/bin
     ]
+    $env.USE_GKE_GCLOUD_AUTH_PLUGIN = True
 } else {
     $env.QA1_USERNAME = program.b2236bd4
     $env.QA2_USERNAME = program.26b1e36d
