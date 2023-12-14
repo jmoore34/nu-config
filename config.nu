@@ -139,9 +139,9 @@ $env.config = {
     use_grid_icons: true
 }
 
-def-env which-cd [program] { which $program | get path | path dirname | str trim | each { |path| cd $path } }
+def --env which-cd [program] { which $program | get path | path dirname | str trim | each { |path| cd $path } }
 
-def-env which-open [program] { which ($program) | get path | path dirname | explorer $in }
+def --env which-open [program] { which ($program) | get path | path dirname | explorer $in }
 
 
 let ad = 'C:/Users/jon/AppData/Roaming'
@@ -164,7 +164,7 @@ alias ct = cargo test
 alias r = cargo r
 alias re = cd ~/repos
 
-def-env mcd [path] {
+def --env mcd [path] {
     mkdir $path
     cd $path
 }
@@ -197,7 +197,7 @@ def count-format [] {
     each { |row| $"($row.value): ($row.count) (char lp)($row.percentage)(char rp)" } | str join (char nl)
 }
 
-def-env goto [] {
+def --env goto [] {
     let input = $in
     cd (
         if ($input | path type) == file {
@@ -344,6 +344,17 @@ def build-extension [] {
   rm *.zip -f
   7z a $"($name).zip" *.json *.js *.html *.css
   print $"(ansi light_green)Done!(ansi reset)"
+}
+
+def rainbow [str: string] {
+    pastel gradient -n ($str | str length) f9584d 4df953
+    | pastel format hex
+    | lines
+    | zip ($str | split chars)
+    | each { |pair|
+        $"<color=($pair.0)>($pair.1)</color>"
+    }
+    | str join ""
 }
 
 alias r = e ~/repos
