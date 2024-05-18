@@ -20,6 +20,7 @@ def present [md_path: path] {
 alias co = git checkout
 alias push = git push
 alias pull = git pull
+alias h = cd ~
 alias cc = cd /Users/m361234/chedr-core
 alias ll = ls -l
 def l [] { ls | grid -c }
