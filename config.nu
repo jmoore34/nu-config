@@ -163,7 +163,7 @@ alias ct = cargo test
 # def s [sec] {shutdown -a | ignore; shutdown -s -t ($sec | into string)}
 
 alias r = cargo r
-alias re = cd ~/repos
+alias re = cd ~/src
 
 def --env mcd [path] {
     mkdir $path
@@ -233,7 +233,7 @@ def e [...args] {
     if $nu.os-info.kernel_version ends-with MANJARO {
         exo-open --launch FileManager $args
     } else {
-        explorer $args
+        explorer ...$args
     }
 }
 alias e. = e .
@@ -280,10 +280,9 @@ def rainbow [str: string] {
     | str join ""
 }
 
-alias r = e ~/repos
+alias r = e ~/src
 alias pl = e $env.plugins
-alias b = nu C:\Users\jon\repos\ChaosTheoryPlugins\build.nu
-use std clip
+alias b = nu C:\Users\jon\src\ChaosTheoryPlugins\build.nu
 
 # work
 if $nu.os-info.name != windows {
