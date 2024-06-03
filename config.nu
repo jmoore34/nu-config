@@ -14,7 +14,7 @@ def debug-cleanup-hs [] {
 def present [md_path: path] {
     let pdf_path = '/tmp/presentation.pdf'
     pandoc -s $md_path -i -o $pdf_path -t beamer -V theme:Malmoe -V aspectratio:169
-    pdfpc $pdf_path
+    pdfpc $pdf_path --switch-screens
 }
 
 alias co = git checkout
@@ -155,9 +155,6 @@ alias venv = py -m virtualenv
 alias p = pnpm
 alias c = code
 alias c. = code .
-alias cr = cargo run
-alias cb = cargo build
-alias ct = cargo test
 # def pointers [string] { echo $string | str find-replace -a "/(" "!(" | str find-replace -a 0x !0x | split row ! | table -n 1 }
 
 # def s [sec] {shutdown -a | ignore; shutdown -s -t ($sec | into string)}
@@ -283,7 +280,6 @@ def rainbow [str: string] {
 alias r = e ~/repos
 alias pl = e $env.plugins
 alias b = nu C:\Users\jon\repos\ChaosTheoryPlugins\build.nu
-use std clip
 
 # work
 if $nu.os-info.name != windows {
@@ -294,6 +290,7 @@ if $nu.os-info.name != windows {
         /Users/m361234/.cargo/bin
     ]
     $env.USE_GKE_GCLOUD_AUTH_PLUGIN = True
+    source ~/.config/env.nu
 } else {
     $env.QA1_USERNAME = program.b2236bd4
     $env.QA2_USERNAME = program.26b1e36d
