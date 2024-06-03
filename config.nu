@@ -301,4 +301,6 @@ if $nu.os-info.name != windows {
     $env.S5_USERNAME = program.a0666a9b
     $env.S6_USERNAME = program.f746c604
     $env.S7_USERNAME = programjmkds.d164a36f
+    $env.S8_USERNAME = programjmkds.f6bd2622
+    $env.S9_USERNAME = programjmkds.1a4df1cb
 }
