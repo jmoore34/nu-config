@@ -160,7 +160,7 @@ alias c. = code .
 # def s [sec] {shutdown -a | ignore; shutdown -s -t ($sec | into string)}
 
 alias r = cargo r
-alias re = cd ~/repos
+alias re = cd ~/src
 
 def --env mcd [path] {
     mkdir $path
@@ -230,7 +230,7 @@ def e [...args] {
     if $nu.os-info.kernel_version ends-with MANJARO {
         exo-open --launch FileManager $args
     } else {
-        explorer $args
+        explorer ...$args
     }
 }
 alias e. = e .
@@ -277,9 +277,9 @@ def rainbow [str: string] {
     | str join ""
 }
 
-alias r = e ~/repos
+alias r = e ~/src
 alias pl = e $env.plugins
-alias b = nu C:\Users\jon\repos\ChaosTheoryPlugins\build.nu
+alias b = nu C:\Users\jon\src\ChaosTheoryPlugins\build.nu
 
 # work
 if $nu.os-info.name != windows {
@@ -290,7 +290,6 @@ if $nu.os-info.name != windows {
         /Users/m361234/.cargo/bin
     ]
     $env.USE_GKE_GCLOUD_AUTH_PLUGIN = True
-    source ~/.config/env.nu
 } else {
     $env.QA1_USERNAME = program.b2236bd4
     $env.QA2_USERNAME = program.26b1e36d
@@ -300,9 +299,12 @@ if $nu.os-info.name != windows {
     $env.S4_USERNAME = program.51291a2d
     $env.S5_USERNAME = program.a0666a9b
     $env.S6_USERNAME = program.f746c604
-    $env.S7_USERNAME = programjmkds.d164a36f
-    $env.S8_USERNAME = programjmkds.f6bd2622
-    $env.S9_USERNAME = programjmkds.1a4df1cb
+    $env.S7_USERNAME = program.e76f0f0e
+    $env.S8_USERNAME = program.d2b6eeda
+    $env.S9_USERNAME = program.3a59800c
+    $env.S10_USERNAME = program.81b7cc68
+    $env.S11_USERNAME = program.3a59800c
+    $env.S12_USERNAME = program.3a59800c
 }
 
 # print a command name as dimmed and italic
@@ -418,5 +420,5 @@ export def c [
 }
 
 def token [] {
-    openssl rand --base64 48 | c
+   openssl rand --base64 48 | c
 }
