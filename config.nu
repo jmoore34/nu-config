@@ -299,7 +299,10 @@ if $nu.os-info.name != windows {
     $env.S4_USERNAME = program.51291a2d
     $env.S5_USERNAME = program.a0666a9b
     $env.S6_USERNAME = program.f746c604
-    $env.S7_USERNAME = programjmkds.d164a36f
-    $env.S8_USERNAME = programjmkds.f6bd2622
-    $env.S9_USERNAME = programjmkds.1a4df1cb
+    $env.S7_USERNAME = program.e76f0f0e
+    $env.S8_USERNAME = program.d2b6eeda
+    $env.S9_USERNAME = program.3a59800c
+    $env.S10_USERNAME = program.81b7cc68
+    $env.S11_USERNAME = program.3a59800c
+    $env.S12_USERNAME = program.3a59800c
 }
