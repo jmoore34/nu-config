@@ -73,13 +73,23 @@ $env.config = {
     show_banner: false
     keybindings: [
         {
-          name: complete_in_cd
+          name: complete_folder
           modifier: control
           keycode: char_s
           mode: emacs
           event: [
               { edit: clear }
               { edit: insertString value: "cd " }
+              { send: Menu name: completion_menu }
+          ]
+        }
+        {
+          name: complete_file
+          modifier: control
+          keycode: char_t
+          mode: emacs
+          event: [
+              { edit: insertString value: "./" }
               { send: Menu name: completion_menu }
           ]
         }
@@ -222,7 +232,7 @@ def boost [] {
 }
 
 def rc [] {
-    code $nu.config-path | path dirname
+    code ($nu.config-path | path dirname)
 }
 alias su = sudo nu
 
@@ -305,8 +315,8 @@ if $nu.os-info.name != windows {
     $env.S10_USERNAME = program.81b7cc68
     $env.S11_USERNAME = program.3a59800c
     $env.S12_USERNAME = program.3a59800c
-    $env.S13_USERNAME = programjmkds.f6bd2622
-    $env.S14_USERNAME = programjmkds.d164a36f
+    $env.S13_USERNAME = programjmkds.d164a36f
+    $env.S14_USERNAME = programjmkds.1a4df1cb
     $env.S15_USERNAME = programjmkds.1a4df1cb
 }
 
