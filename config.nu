@@ -227,8 +227,8 @@ def rc [] {
 alias su = sudo nu
 
 def e [...args] {
-    if $nu.os-info.kernel_version ends-with MANJARO {
-        exo-open --launch FileManager $args
+    if $nu.os-info.name != windows {
+        ^open ...$args
     } else {
         explorer ...$args
     }
