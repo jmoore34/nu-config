@@ -432,6 +432,10 @@ export def c [
     }
 }
 
+def lc [] {
+    history | last 2 | get 0.command | c
+}
+
 def token [] {
    openssl rand --base64 48 | c
 }
