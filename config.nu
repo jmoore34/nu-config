@@ -23,8 +23,8 @@ alias pull = git pull
 alias h = cd ~
 alias cc = cd /Users/m361234/chedr-core
 alias ll = ls -l
-def l [] { ls | grid -c }
-def la [] { ls -a | grid -c }
+def l [] { ls | grid -ci }
+def la [] { ls -a | grid -ci }
 def dps [] { docker ps | from ssv }
 def dls [] { docker image ls | from ssv }
 # Kill all running Docker containers
@@ -147,7 +147,6 @@ $env.config = {
     }
     buffer_editor: "micro"
     footer_mode: "auto" # always, never, number_of_rows, auto
-    use_grid_icons: true
 }
 
 def --env which-cd [program] { which $program | get path | path dirname | str trim | each { |path| cd $path } }
@@ -299,25 +298,25 @@ if $nu.os-info.name != windows {
         /Users/m361234/.ghcup/bin
         /Users/m361234/.cargo/bin
     ]
-    $env.USE_GKE_GCLOUD_AUTH_PLUGIN = True
+    $env.USE_GKE_GCLOUD_AUTH_PLUGIN = true
 } else {
-    $env.QA1_USERNAME = program.b2236bd4
-    $env.QA2_USERNAME = program.26b1e36d
-    $env.S1_USERNAME = program.b8b5e0a8
-    $env.S2_USERNAME = program.f2b28f5a
-    $env.S3_USERNAME = program.004e3121
-    $env.S4_USERNAME = program.51291a2d
-    $env.S5_USERNAME = program.a0666a9b
-    $env.S6_USERNAME = program.f746c604
-    $env.S7_USERNAME = program.e76f0f0e
-    $env.S8_USERNAME = program.d2b6eeda
-    $env.S9_USERNAME = program.3a59800c
-    $env.S10_USERNAME = program.81b7cc68
-    $env.S11_USERNAME = program.3a59800c
-    $env.S12_USERNAME = program.3a59800c
-    $env.S13_USERNAME = programjmkds.d164a36f
-    $env.S14_USERNAME = programjmkds.1a4df1cb
-    $env.S15_USERNAME = programjmkds.1a4df1cb
+    $env.QA1_USERNAME = "program.b2236bd4"
+    $env.QA2_USERNAME = "program.26b1e36d"
+    $env.S1_USERNAME = "program.b8b5e0a8"
+    $env.S2_USERNAME = "program.f2b28f5a"
+    $env.S3_USERNAME = "program.004e3121"
+    $env.S4_USERNAME = "program.51291a2d"
+    $env.S5_USERNAME = "program.a0666a9b"
+    $env.S6_USERNAME = "program.f746c604"
+    $env.S7_USERNAME = "program.e76f0f0e"
+    $env.S8_USERNAME = "program.d2b6eeda"
+    $env.S9_USERNAME = "program.3a59800c"
+    $env.S10_USERNAME = "program.81b7cc68"
+    $env.S11_USERNAME = "program.3a59800c"
+    $env.S12_USERNAME = "program.3a59800c"
+    $env.S13_USERNAME = "programjmkds.d164a36f"
+    $env.S14_USERNAME = "programjmkds.1a4df1cb"
+    $env.S15_USERNAME = "programjmkds.1a4df1cb"
 }
 
 # print a command name as dimmed and italic
