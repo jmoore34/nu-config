@@ -86,7 +86,7 @@ $env.config = {
         {
           name: complete_file
           modifier: control
-          keycode: char_t
+          keycode: char_g
           mode: emacs
           event: [
               { edit: insertString value: "./" }
