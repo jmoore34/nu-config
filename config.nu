@@ -32,6 +32,7 @@ def "docker kill-all" [] {
     docker ps -q | lines | each {|id| docker kill $id}
 }
 alias dka = docker kill-all
+alias k = kubetui --namespaces chedr --context gke_heb-cx-prod_us-central1_cx-prod --split-direction horizontal
 
 $env.config = {
     ls: {
