@@ -76,7 +76,7 @@ $env.config = {
         {
           name: complete_folder
           modifier: control
-          keycode: char_s
+          keycode: char_g
           mode: emacs
           event: [
               { edit: clear }
@@ -87,7 +87,7 @@ $env.config = {
         {
           name: complete_file
           modifier: control
-          keycode: char_g
+          keycode: char_s
           mode: emacs
           event: [
               { edit: insertString value: "./" }
