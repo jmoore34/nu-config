@@ -74,6 +74,16 @@ $env.config = {
     show_banner: false
     keybindings: [
         {
+            name: copy_commandline
+            modifier: control
+            keycode: char_o
+            mode: emacs
+            event: [{
+                send: executehostcommand
+                cmd: "commandline | c --silent"
+            }]
+        }
+        {
           name: complete_folder
           modifier: control
           keycode: char_g
@@ -171,6 +181,17 @@ alias c. = code .
 
 alias r = cargo r
 alias re = cd ~/src
+
+def r [old, new, files, --write(-w)] {
+    for f in (glob $files) {
+        if $write {
+            open $f | str replace $old $new --all | save $f --force
+        } else {
+            print $"(ansi yb)($f)(ansi reset)"
+            print (open $f | str replace $old $"(ansi gb)($new)(ansi reset)" --all)
+        }
+    }
+}
 
 def --env mcd [path] {
     mkdir $path
