@@ -179,7 +179,6 @@ alias c. = code .
 
 # def s [sec] {shutdown -a | ignore; shutdown -s -t ($sec | into string)}
 
-alias r = cargo r
 alias re = cd ~/src
 
 def r [old, new, files, --write(-w)] {
@@ -308,7 +307,6 @@ def rainbow [str: string] {
     | str join ""
 }
 
-alias r = e ~/src
 alias pl = e $env.plugins
 alias b = nu C:\Users\jon\src\ChaosTheoryPlugins\build.nu
 
