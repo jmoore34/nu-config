@@ -181,6 +181,11 @@ alias c. = code .
 
 alias re = cd ~/src
 
+def ctx [] {
+    let context  = kubectl config get-contexts | detect columns | get name | input list
+    kubectl config use-context $context
+}
+
 def r [old, new, files, --write(-w)] {
     for f in (glob $files) {
         if $write {
