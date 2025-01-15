@@ -32,7 +32,8 @@ def "docker kill-all" [] {
     docker ps -q | lines | each {|id| docker kill $id}
 }
 alias dka = docker kill-all
-alias k = kubetui --namespaces chedr --context cx-prod --split-direction horizontal
+alias k = kubetui --namespaces chedr --split-direction horizontal
+alias kc = kubectl -n chedr
 
 $env.config = {
     ls: {
@@ -181,9 +182,10 @@ alias c. = code .
 
 alias re = cd ~/src
 
-def ctx [] {
+def --env ctx [] {
     let context  = kubectl config get-contexts | detect columns | get name | input list
     kubectl config use-context $context
+    $env.SHOW_K8S = 1
 }
 
 def r [old, new, files, --write(-w)] {
