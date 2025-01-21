@@ -321,29 +321,13 @@ alias b = nu C:\Users\jon\src\ChaosTheoryPlugins\build.nu
 if $nu.os-info.name != windows {
     $env.PROJECT_DIR = '/Users/m361234/chedr-core'
     $env.GITHUB_USER = 'jon'
+    $env.PNPM_HOME = '/Users/m361234/Library/pnpm'
     $env.PATH ++= [
+        /Users/m361234/Library/pnpm
         /Users/m361234/.ghcup/bin
         /Users/m361234/.cargo/bin
     ]
     $env.USE_GKE_GCLOUD_AUTH_PLUGIN = true
-} else {
-    $env.QA1_USERNAME = "program.b2236bd4"
-    $env.QA2_USERNAME = "program.26b1e36d"
-    $env.S1_USERNAME = "program.b8b5e0a8"
-    $env.S2_USERNAME = "program.f2b28f5a"
-    $env.S3_USERNAME = "program.004e3121"
-    $env.S4_USERNAME = "program.51291a2d"
-    $env.S5_USERNAME = "program.a0666a9b"
-    $env.S6_USERNAME = "program.f746c604"
-    $env.S7_USERNAME = "program.e76f0f0e"
-    $env.S8_USERNAME = "program.d2b6eeda"
-    $env.S9_USERNAME = "program.3a59800c"
-    $env.S10_USERNAME = "program.81b7cc68"
-    $env.S11_USERNAME = "program.3a59800c"
-    $env.S12_USERNAME = "program.3a59800c"
-    $env.S13_USERNAME = "program.bee38295"
-    $env.S14_USERNAME = "program.a4400b58"
-    $env.S15_USERNAME = "program.cfb0a767"
 }
 
 # print a command name as dimmed and italic
