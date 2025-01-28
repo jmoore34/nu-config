@@ -1,7 +1,3 @@
-let carapace_completer = {|spans|
-  carapace $spans.0 nushell ...$spans | from json
-}
-
 def debug-cleanup-hs [] {
     ls **/*.hs
     | each { |file|
@@ -33,47 +29,21 @@ def "docker kill-all" [] {
 }
 alias dka = docker kill-all
 alias k = kubetui --namespaces chedr --split-direction horizontal
-alias kc = kubectl -n chedr
 
-$env.config = {
-    ls: {
-        use_ls_colors: true
-        clickable_links: true
-    }
-    rm: {
-        always_trash: true
-    }
-    table: {
-        mode: rounded # basic, compact, compact_double, light, thin, with_love, rounded, reinforced, heavy, none, other
-        index_mode: always # "always" show indexes, "never" show indexes, "auto" = show indexes when a table has "index" column
-        trim: {
-            methodology: wrapping # wrapping or truncating
-            wrapping_try_keep_words: true # A strategy used by the 'wrapping' methodology
-            truncating_suffix: "..." # A suffix used by the 'truncating' methodology
-        }
-    }
-    history: {
-        max_size: 10000 # Session has to be reloaded for this to take effect
-        sync_on_enter: true # Enable to share history between multiple sessions, else you have to close the session to write history to file
-        file_format: "sqlite"
-    }
-    completions: {
-        case_sensitive: false
+let carapace_completer = {|spans|
+  carapace $spans.0 nushell ...$spans | from json
+}
+$env.config.completions = {
         quick: false  # set this to false to prevent auto-selecting completions when only one remains
-        partial: true  # set this to false to prevent partial filling of the prompt
         algorithm: "fuzzy"  # prefix or fuzzy
         external: {
             enable: true # set to false to prevent nushell looking into $env.PATH to find more suggestions, `false` recommended for WSL users as this look up my be very slow
-            max_results: 100 # setting it lower can improve completion performance at the cost of omitting some options
             completer: $carapace_completer
         }
     }
-    filesize: {
-        metric: true
-        format: "auto"
-    }
-    show_banner: false
-    keybindings: [
+$env.config.history.isolation = true
+$env.config.show_banner = false
+$env.config.keybindings ++= [
         {
             name: copy_commandline
             modifier: control
@@ -125,15 +95,6 @@ $env.config = {
             }
         }
         {
-            name: cut_line
-            modifier: control
-            keycode: char_k
-            mode: emacs
-            event: [
-                { edit: cutCurrentLine }
-            ]
-        }
-        {
             name: newline
             modifier: shift
             keycode: Enter
@@ -143,7 +104,7 @@ $env.config = {
             ]
         }
     ]
-    hooks: {
+$env.config.hooks = {
         env_change: {
             PWD: [
                 { |before, after|
@@ -157,9 +118,7 @@ $env.config = {
             if (term size).columns >= 80 { table -e } else { table }
         }
     }
-    buffer_editor: "micro"
-    footer_mode: "auto" # always, never, number_of_rows, auto
-}
+$env.EDITOR = "code"
 
 def --env which-cd [program] { which $program | get path | path dirname | str trim | each { |path| cd $path } }
 
@@ -176,17 +135,42 @@ alias venv = py -m virtualenv
 alias p = pnpm
 alias c = code
 alias c. = code .
+alias h = xh --verify no
 # def pointers [string] { echo $string | str find-replace -a "/(" "!(" | str find-replace -a 0x !0x | split row ! | table -n 1 }
 
 # def s [sec] {shutdown -a | ignore; shutdown -s -t ($sec | into string)}
 
 alias re = cd ~/src
 
-def --env ctx [] {
-    let context  = kubectl config get-contexts | detect columns | get name | input list
-    kubectl config use-context $context
+def --wrapped kubectl [...args] {
+    if ($env.SHOW_K8S? | is-empty) {
+        print $"(ansi rb)Error: set k8s context first"
+        exit 1
+    }
+    let context = ^kubectl config current-context
+    if "prod" in $context and ($env.DANGER_K8S? | is-empty) {
+        print $"(ansi rb)Error: set $env.DANGER_K8S to use kubectl in preprod/prod"
+        exit 2
+    }
+    ^kubectl ...$args
+}
+alias kc = kubectl -n chedr
+
+def --env ctx [context?] {
+    let context  = if ($context | is-empty) {
+        ^kubectl config get-contexts | detect columns | get name | input list
+    } else { $context }
+    ^kubectl config use-context $context
     $env.SHOW_K8S = 1
 }
+alias cxd = ctx cx-dev
+alias cxc = ctx cx-cert
+alias cxr = ctx cx-preprod
+alias cxp = ctx cx-prod
+alias kpd = ctx kp-dev
+alias kpc = ctx kp-cert
+alias kpr = ctx kp-preprod
+alias kpp = ctx kp-prod
 
 def r [old, new, files, --write(-w)] {
     for f in (glob $files) {
