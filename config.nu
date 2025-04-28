@@ -33,6 +33,7 @@ def "docker kill-all" [] {
 }
 alias dka = docker kill-all
 alias k = kubetui --namespaces chedr --context gke_heb-cx-prod_us-central1_cx-prod --split-direction horizontal
+alias dog = dog @1.1.1.1
 
 $env.config = {
     ls: {
@@ -167,6 +168,7 @@ def --env which-open [program] { which ($program) | get path | path dirname | ex
 
 let ad = 'C:/Users/jon/AppData/Roaming'
 alias ad = cd $ad
+alias a = C:\Users\jon\AppData\Local\Programs\AutoHotkey\v2\AutoHotkey64.exe
 alias pwd = echo $env.PWD
 alias cwd = echo $env.PWD
 alias m = micro
@@ -320,23 +322,8 @@ if $nu.os-info.name != windows {
     ]
     $env.USE_GKE_GCLOUD_AUTH_PLUGIN = true
 } else {
-    $env.QA1_USERNAME = "program.b2236bd4"
-    $env.QA2_USERNAME = "program.26b1e36d"
-    $env.S1_USERNAME = "program.b8b5e0a8"
-    $env.S2_USERNAME = "program.f2b28f5a"
-    $env.S3_USERNAME = "program.004e3121"
-    $env.S4_USERNAME = "program.51291a2d"
-    $env.S5_USERNAME = "program.a0666a9b"
-    $env.S6_USERNAME = "program.f746c604"
-    $env.S7_USERNAME = "program.e76f0f0e"
-    $env.S8_USERNAME = "program.d2b6eeda"
-    $env.S9_USERNAME = "program.3a59800c"
-    $env.S10_USERNAME = "program.81b7cc68"
-    $env.S11_USERNAME = "program.3a59800c"
-    $env.S12_USERNAME = "program.3a59800c"
-    $env.S13_USERNAME = "program.bee38295"
-    $env.S14_USERNAME = "program.a4400b58"
-    $env.S15_USERNAME = "program.cfb0a767"
+    $env.PTERODACTYL_USERNAME = 'program'
+    $env.PTERODACTYL_API_KEY = 'ptla_P4BIL4c4NnWYikI32LDBSYF4NsqgFGFO2e8PIfX4F3u'
 }
 
 # print a command name as dimmed and italic
