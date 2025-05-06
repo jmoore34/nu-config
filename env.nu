@@ -36,5 +36,18 @@ $env.NU_PLUGIN_DIRS = [
     ($nu.config-path | path dirname | path join 'plugins')
 ]
 
-# To add entries to PATH (on Windows you might use Path), you can use the following pattern:
-# $env.PATH = ($env.PATH | prepend '/some/path')
+# work
+if $nu.os-info.name != windows {
+    $env.PROJECT_DIR = '/Users/m361234/chedr-core'
+    $env.GITHUB_USER = 'jon'
+    $env.PNPM_HOME = '/Users/m361234/Library/pnpm'
+    $env.PATH ++= [
+        /opt/homebrew/bin
+        /Users/m361234/Library/pnpm
+        /Users/m361234/.ghcup/bin
+        /Users/m361234/.cargo/bin
+        /Applications/Docker.app/Contents/Resources/bin
+    ]
+    $env.USE_GKE_GCLOUD_AUTH_PLUGIN = true
+    $env.CHEDR_DIR = '/Users/m361234/chedr-core'
+}

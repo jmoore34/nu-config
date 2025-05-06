@@ -42,6 +42,7 @@ $env.config.completions = {
         }
     }
 $env.config.history.isolation = true
+$env.config.history.file_format = 'sqlite'
 $env.config.show_banner = false
 $env.config.keybindings ++= [
         {
@@ -135,7 +136,7 @@ alias venv = py -m virtualenv
 alias p = pnpm
 alias c = code
 alias c. = code .
-alias h = xh --verify no
+alias xh = xh --verify no
 # def pointers [string] { echo $string | str find-replace -a "/(" "!(" | str find-replace -a 0x !0x | split row ! | table -n 1 }
 
 # def s [sec] {shutdown -a | ignore; shutdown -s -t ($sec | into string)}
@@ -145,12 +146,12 @@ alias re = cd ~/src
 def --wrapped kubectl [...args] {
     if ($env.SHOW_K8S? | is-empty) {
         print $"(ansi rb)Error: set k8s context first"
-        exit 1
+        return 1
     }
     let context = ^kubectl config current-context
     if "prod" in $context and ($env.DANGER_K8S? | is-empty) {
         print $"(ansi rb)Error: set $env.DANGER_K8S to use kubectl in preprod/prod"
-        exit 2
+        return 2
     }
     ^kubectl ...$args
 }
@@ -300,19 +301,6 @@ def rainbow [str: string] {
 
 alias pl = e $env.plugins
 alias b = nu C:\Users\jon\src\ChaosTheoryPlugins\build.nu
-
-# work
-if $nu.os-info.name != windows {
-    $env.PROJECT_DIR = '/Users/m361234/chedr-core'
-    $env.GITHUB_USER = 'jon'
-    $env.PNPM_HOME = '/Users/m361234/Library/pnpm'
-    $env.PATH ++= [
-        /Users/m361234/Library/pnpm
-        /Users/m361234/.ghcup/bin
-        /Users/m361234/.cargo/bin
-    ]
-    $env.USE_GKE_GCLOUD_AUTH_PLUGIN = true
-}
 
 # print a command name as dimmed and italic
 def pretty-command [] {
