@@ -145,7 +145,7 @@ alias xh = xh --verify no
 alias re = cd ~/src
 
 def --wrapped kubectl [...args] {
-    ensure-auth
+    check-auth
     if ($env.SHOW_K8S? | is-empty) {
         print $"(ansi rb)Error: set k8s context first"
         return 1
@@ -158,14 +158,15 @@ def --wrapped kubectl [...args] {
     ^kubectl ...$args
 }
 
-def ensure-auth [] {
-    if not (gcloud auth list --filter=status:ACTIVE | str contains "*") {
+def check-auth [] {
+    (
+        if not (gcloud auth list --filter=status:ACTIVE | complete | get stdout | str contains "*") {
         gcloud auth login
-    }
+    }) | ignore
 }
 
 def k [] {
-    ensure-auth
+    check-auth
     kubetui --namespaces chedr --split-direction horizontal
 }
 
@@ -178,14 +179,24 @@ def --env ctx [context?] {
     ^kubectl config use-context $context
     $env.SHOW_K8S = 1
 }
-alias cxd = ctx cx-dev
-alias cxc = ctx cx-cert
-alias cxr = ctx cx-preprod
-alias cxp = ctx cx-prod
-alias kpd = ctx kp-dev
-alias kpc = ctx kp-cert
-alias kpr = ctx kp-preprod
-alias kpp = ctx kp-prod
+def make-contexts [] {
+    gcloud container clusters get-credentials cx-dev --region us-central1 --project heb-cx-nonprod
+    gcloud container clusters get-credentials cx-cert --region us-central1 --project heb-cx-nonprod
+    gcloud container clusters get-credentials cx-preprod --region us-central1 --project heb-cx-prod
+    gcloud container clusters get-credentials cx-prod --region us-central1 --project heb-cx-prod
+    gcloud container clusters get-credentials kp-dev --region us-central1 --project heb-cx-nonprod
+    gcloud container clusters get-credentials kp-cert --region us-central1 --project heb-cx-nonprod
+    gcloud container clusters get-credentials kp-preprod --region us-central1 --project heb-cx-prod
+    gcloud container clusters get-credentials kp-prod --region us-central1 --project heb-cx-prod
+}
+alias cxd = ctd gke_heb-cx-nonprod_us-central1_cx-dev
+alias cxc = ctx gke_heb-cx-nonprod_us-central1_cx-cert
+alias cxr = ctx gke_heb-cx-prod_us-central1_cx-preprod
+alias cxp = ctx gke_heb-cx-prod_us-central1_cx-prod
+alias kpd = ctx gke_heb-cx-nonprod_us-central1_kp-dev
+alias kpc = ctx gke_heb-cx-nonprod_us-central1_kp-cert
+alias kpr = ctx gke_heb-cx-prod_us-central1_kp-preprod
+alias kpp = ctx gke_heb-cx-prod_us-central1_kp-prod
 
 def r [old, new, files, --write(-w)] {
     for f in (glob $files) {
