@@ -28,7 +28,7 @@ def "docker kill-all" [] {
     docker ps -q | lines | each {|id| docker kill $id}
 }
 alias dka = docker kill-all
-alias k = kubetui --namespaces chedr --split-direction horizontal
+
 
 let carapace_completer = {|spans|
   carapace $spans.0 nushell ...$spans | from json
@@ -121,12 +121,13 @@ $env.config.hooks = {
     }
 $env.EDITOR = "code"
 
-def --env which-cd [program] { which $program | get path | path dirname | str trim | each { |path| cd $path } }
+def --env wcd [program] { which $program | get path.0 | path dirname | cd $in }
 
 def --env which-open [program] { which ($program) | get path | path dirname | explorer $in }
 
 
 let ad = 'C:/Users/jon/AppData/Roaming'
+alias post = curl -X POST -H "Content-Type:application/json"
 alias ad = cd $ad
 alias pwd = echo $env.PWD
 alias cwd = echo $env.PWD
@@ -144,6 +145,7 @@ alias xh = xh --verify no
 alias re = cd ~/src
 
 def --wrapped kubectl [...args] {
+    ensure-auth
     if ($env.SHOW_K8S? | is-empty) {
         print $"(ansi rb)Error: set k8s context first"
         return 1
@@ -155,6 +157,18 @@ def --wrapped kubectl [...args] {
     }
     ^kubectl ...$args
 }
+
+def ensure-auth [] {
+    if not (gcloud auth list --filter=status:ACTIVE | str contains "*") {
+        gcloud auth login
+    }
+}
+
+def k [] {
+    ensure-auth
+    kubetui --namespaces chedr --split-direction horizontal
+}
+
 alias kc = kubectl -n chedr
 
 def --env ctx [context?] {
