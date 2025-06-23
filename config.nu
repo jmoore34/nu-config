@@ -189,7 +189,7 @@ def make-contexts [] {
     gcloud container clusters get-credentials kp-preprod --region us-central1 --project heb-cx-prod
     gcloud container clusters get-credentials kp-prod --region us-central1 --project heb-cx-prod
 }
-alias cxd = ctd gke_heb-cx-nonprod_us-central1_cx-dev
+alias cxd = ctx gke_heb-cx-nonprod_us-central1_cx-dev
 alias cxc = ctx gke_heb-cx-nonprod_us-central1_cx-cert
 alias cxr = ctx gke_heb-cx-prod_us-central1_cx-preprod
 alias cxp = ctx gke_heb-cx-prod_us-central1_cx-prod
