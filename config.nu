@@ -28,7 +28,6 @@ def "docker kill-all" [] {
     docker ps -q | lines | each {|id| docker kill $id}
 }
 alias dka = docker kill-all
-alias k = kubetui --namespaces chedr --split-direction horizontal
 alias dog = dog @1.1.1.1
 
 let carapace_completer = {|spans|
@@ -43,6 +42,7 @@ $env.config.completions = {
         }
     }
 $env.config.history.isolation = true
+$env.config.history.file_format = 'sqlite'
 $env.config.show_banner = false
 $env.config.keybindings ++= [
         {
@@ -121,12 +121,13 @@ $env.config.hooks = {
     }
 $env.EDITOR = "code"
 
-def --env which-cd [program] { which $program | get path | path dirname | str trim | each { |path| cd $path } }
+def --env wcd [program] { which $program | get path.0 | path dirname | cd $in }
 
 def --env which-open [program] { which ($program) | get path | path dirname | explorer $in }
 
 
 let ad = 'C:/Users/jon/AppData/Roaming'
+alias post = curl -X POST -H "Content-Type:application/json"
 alias ad = cd $ad
 alias a = C:\Users\jon\AppData\Local\Programs\AutoHotkey\v2\AutoHotkey64.exe
 alias pwd = echo $env.PWD
@@ -137,7 +138,7 @@ alias venv = py -m virtualenv
 alias p = pnpm
 alias c = code
 alias c. = code .
-alias h = xh --verify no
+alias xh = xh --verify no
 # def pointers [string] { echo $string | str find-replace -a "/(" "!(" | str find-replace -a 0x !0x | split row ! | table -n 1 }
 
 # def s [sec] {shutdown -a | ignore; shutdown -s -t ($sec | into string)}
@@ -145,17 +146,31 @@ alias h = xh --verify no
 alias re = cd ~/src
 
 def --wrapped kubectl [...args] {
+    check-auth
     if ($env.SHOW_K8S? | is-empty) {
         print $"(ansi rb)Error: set k8s context first"
-        exit 1
+        return 1
     }
     let context = ^kubectl config current-context
     if "prod" in $context and ($env.DANGER_K8S? | is-empty) {
         print $"(ansi rb)Error: set $env.DANGER_K8S to use kubectl in preprod/prod"
-        exit 2
+        return 2
     }
     ^kubectl ...$args
 }
+
+def check-auth [] {
+    (
+        if not (gcloud auth list --filter=status:ACTIVE | complete | get stdout | str contains "*") {
+        gcloud auth login
+    }) | ignore
+}
+
+def k [] {
+    check-auth
+    kubetui --namespaces chedr --split-direction horizontal
+}
+
 alias kc = kubectl -n chedr
 
 def --env ctx [context?] {
@@ -165,14 +180,24 @@ def --env ctx [context?] {
     ^kubectl config use-context $context
     $env.SHOW_K8S = 1
 }
-alias cxd = ctx cx-dev
-alias cxc = ctx cx-cert
-alias cxr = ctx cx-preprod
-alias cxp = ctx cx-prod
-alias kpd = ctx kp-dev
-alias kpc = ctx kp-cert
-alias kpr = ctx kp-preprod
-alias kpp = ctx kp-prod
+def make-contexts [] {
+    gcloud container clusters get-credentials cx-dev --region us-central1 --project heb-cx-nonprod
+    gcloud container clusters get-credentials cx-cert --region us-central1 --project heb-cx-nonprod
+    gcloud container clusters get-credentials cx-preprod --region us-central1 --project heb-cx-prod
+    gcloud container clusters get-credentials cx-prod --region us-central1 --project heb-cx-prod
+    gcloud container clusters get-credentials kp-dev --region us-central1 --project heb-cx-nonprod
+    gcloud container clusters get-credentials kp-cert --region us-central1 --project heb-cx-nonprod
+    gcloud container clusters get-credentials kp-preprod --region us-central1 --project heb-cx-prod
+    gcloud container clusters get-credentials kp-prod --region us-central1 --project heb-cx-prod
+}
+alias cxd = ctx gke_heb-cx-nonprod_us-central1_cx-dev
+alias cxc = ctx gke_heb-cx-nonprod_us-central1_cx-cert
+alias cxr = ctx gke_heb-cx-prod_us-central1_cx-preprod
+alias cxp = ctx gke_heb-cx-prod_us-central1_cx-prod
+alias kpd = ctx gke_heb-cx-nonprod_us-central1_kp-dev
+alias kpc = ctx gke_heb-cx-nonprod_us-central1_kp-cert
+alias kpr = ctx gke_heb-cx-prod_us-central1_kp-preprod
+alias kpp = ctx gke_heb-cx-prod_us-central1_kp-prod
 
 def r [old, new, files, --write(-w)] {
     for f in (glob $files) {
@@ -302,19 +327,6 @@ def rainbow [str: string] {
 
 alias pl = e $env.plugins
 alias b = nu C:\Users\jon\src\ChaosTheoryPlugins\build.nu
-
-# work
-if $nu.os-info.name != windows {
-    $env.PROJECT_DIR = '/Users/m361234/chedr-core'
-    $env.GITHUB_USER = 'jon'
-    $env.PNPM_HOME = '/Users/m361234/Library/pnpm'
-    $env.PATH ++= [
-        /Users/m361234/Library/pnpm
-        /Users/m361234/.ghcup/bin
-        /Users/m361234/.cargo/bin
-    ]
-    $env.USE_GKE_GCLOUD_AUTH_PLUGIN = true
-}
 
 # print a command name as dimmed and italic
 def pretty-command [] {
