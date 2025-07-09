@@ -150,17 +150,16 @@ def --wrapped kubectl [...args] {
         print $"(ansi rb)Error: set k8s context first"
         return 1
     }
-    let context = ^kubectl config current-context
-    if "prod" in $context and ($env.DANGER_K8S? | is-empty) {
-        print $"(ansi rb)Error: set $env.DANGER_K8S to use kubectl in preprod/prod"
-        return 2
+    let context = ^kubectl config current-context | str replace -r '.*_' ''
+    if ($context | str ends-with "prod") {
+        print $"(ansi bg_r) WARNING (ansi reset)(ansi rb) Executing in ($context)(ansi reset)"
     }
     ^kubectl ...$args
 }
 
 def check-auth [] {
     (
-        if not (gcloud auth list --filter=status:ACTIVE | complete | get stdout | str contains "*") {
+        if not (^kubectl -n chedr get pods | str contains "coco") {
         gcloud auth login
     }) | ignore
 }
