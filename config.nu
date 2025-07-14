@@ -86,16 +86,6 @@ $env.config.keybindings ++= [
             ]
         }
         {
-            name: reload_config
-            modifier: alt
-            keycode: char_p
-            mode: emacs
-            event: {
-              send: executehostcommand,
-              cmd: $"source '($nu.config-path)'"
-            }
-        }
-        {
             name: newline
             modifier: shift
             keycode: Enter
@@ -197,10 +187,11 @@ alias kpc = ctx gke_heb-cx-nonprod_us-central1_kp-cert
 alias kpr = ctx gke_heb-cx-prod_us-central1_kp-preprod
 alias kpp = ctx gke_heb-cx-prod_us-central1_kp-prod
 
-def r [old, new, files, --write(-w)] {
+def r [old, new, files, --write(-w), --regex(-r)] {
     for f in (glob $files) {
         if $write {
-            open $f | str replace $old $new --all | save $f --force
+            # rg --regexp $old --replace $new $f | save $f --force
+            open $f | str replace --regex=($regex) $old $new --all --multiline | save $f --force
         } else {
             print $"(ansi yb)($f)(ansi reset)"
             print (open $f | str replace $old $"(ansi gb)($new)(ansi reset)" --all)
@@ -444,4 +435,8 @@ def lc [] {
 
 def token [] {
    openssl rand --base64 48 | c
+}
+
+def autoweed [] {
+    $in | r ($in | split column ": " | get column3 | each { '^\s*[(,] ' + $in + '\n' } | str join "|" | "(?:" + $in + ")") '' **/*.hs --write --regex
 }
