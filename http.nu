@@ -21,7 +21,7 @@ export def request [
         --silent --show-error
         $"($url)(if ($query_params | is-not-empty) {"?" + ($query_params | url build-query)})"
         (if ($extra_curl_params | is-not-empty) {$extra_curl_params} else [])
-        (if ($verbose) {[--verbose]} else [])
+        (if ($verbose and not $full) {[--verbose]} else [])
         (if ($insecure) {[--insecure]} else [])
     ] | flatten
     def format_output [] {
@@ -37,6 +37,7 @@ export def request [
             | get stderr
             | from json
             | insert body ($stdout | format_output)
+            | insert headers.request $headers
             | update headers.response {|json|
                 $json.headers.response
                 | transpose
