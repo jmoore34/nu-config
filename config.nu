@@ -97,6 +97,16 @@ $env.config.keybindings ++= [
             }]
         }
         {
+            name: build_script
+            modifier: none
+            keycode: f2
+            mode: emacs
+            event: [{
+                send: executehostcommand
+                cmd: 'C:\Users\jon\src\ChaosTheoryPlugins-LabAPI\build.exe'
+            }]
+        }
+        {
           name: complete_folder
           modifier: control
           keycode: char_g
