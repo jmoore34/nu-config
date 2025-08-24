@@ -47,6 +47,7 @@ if $nu.os-info.name != windows {
         /Users/m361234/.ghcup/bin
         /Users/m361234/.cargo/bin
         /Users/m361234/.cabal/bin
+        /Users/m361234/.local/bin
         /Users/m361234/repl
         /Applications/Docker.app/Contents/Resources/bin
     ]

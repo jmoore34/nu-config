@@ -1,3 +1,24 @@
+use http.nu *
+
+def HTTP [
+    method: string # GET, POST, PUT, HEAD, PATCH, OPTIONS
+    url: string
+    --json(-j): any
+    --headers(-H): record
+    --query-params(-q): record
+    --extra-curl-params(-x): string
+    --print-curl-command(-c)
+    --verbose(-v) # Print all debug information to stdout
+    --full(-f) # returns the full response instead of only the body
+    --raw(-r) # fetch contents as text rather than a table
+    --read-only-token # use the read only token
+] {
+    let token = if $read_only_token {$env.READ_ONLY_TOKEN?} else {$env.COSTXP_TOKEN}
+    let augmented_headers = {Authorization: $token} | merge ($headers | default {})
+    let path = $env.HOST + "/" + ($url | str replace -r ^/ "")
+    request $method $path --insecure --json=$json --headers=$augmented_headers --query-params=$query_params --extra-curl-params=$extra_curl_params --print-curl-command=$print_curl_command --verbose=$verbose --full=$full --raw=$raw
+}
+
 def debug-cleanup-hs [] {
     ls **/*.hs
     | each { |file|
@@ -56,6 +77,26 @@ $env.config.keybindings ++= [
             }]
         }
         {
+            name: reload_config
+            modifier: none
+            keycode: f5
+            mode: emacs
+            event: [{
+                send: executehostcommand
+                cmd: $"source '($nu.config-path)'; use '($nu.config-path | path dirname | path join "http.nu")' *"
+            }]
+        }
+        {
+            name: reload_repl
+            modifier: none
+            keycode: f4
+            mode: emacs
+            event: [{
+                send: executehostcommand
+                cmd: $"source /Users/m361234/repl/repl.nu"
+            }]
+        }
+        {
           name: complete_folder
           modifier: control
           keycode: char_g
@@ -84,16 +125,6 @@ $env.config.keybindings ++= [
             event: [
                   { edit: BackspaceWord  }
             ]
-        }
-        {
-            name: reload_config
-            modifier: alt
-            keycode: char_p
-            mode: emacs
-            event: {
-              send: executehostcommand,
-              cmd: $"source '($nu.config-path)'"
-            }
         }
         {
             name: newline
@@ -151,17 +182,16 @@ def --wrapped kubectl [...args] {
         print $"(ansi rb)Error: set k8s context first"
         return 1
     }
-    let context = ^kubectl config current-context
-    if "prod" in $context and ($env.DANGER_K8S? | is-empty) {
-        print $"(ansi rb)Error: set $env.DANGER_K8S to use kubectl in preprod/prod"
-        return 2
+    let context = ^kubectl config current-context | str replace -r '.*_' ''
+    if ($context | str ends-with "prod") {
+        print $"(ansi bg_r) WARNING (ansi reset)(ansi rb) Executing in ($context)(ansi reset)"
     }
     ^kubectl ...$args
 }
 
 def check-auth [] {
     (
-        if not (gcloud auth list --filter=status:ACTIVE | complete | get stdout | str contains "*") {
+        if not (^kubectl -n chedr get pods | str contains "coco") {
         gcloud auth login
     }) | ignore
 }
@@ -179,6 +209,7 @@ def --env ctx [context?] {
     } else { $context }
     ^kubectl config use-context $context
     $env.SHOW_K8S = 1
+    $env.ENV = null
 }
 def make-contexts [] {
     gcloud container clusters get-credentials cx-dev --region us-central1 --project heb-cx-nonprod
@@ -199,10 +230,11 @@ alias kpc = ctx gke_heb-cx-nonprod_us-central1_kp-cert
 alias kpr = ctx gke_heb-cx-prod_us-central1_kp-preprod
 alias kpp = ctx gke_heb-cx-prod_us-central1_kp-prod
 
-def r [old, new, files, --write(-w)] {
+def r [old, new, files, --write(-w), --regex(-r)] {
     for f in (glob $files) {
         if $write {
-            open $f | str replace $old $new --all | save $f --force
+            # rg --regexp $old --replace $new $f | save $f --force
+            open $f | str replace --regex=($regex) $old $new --all --multiline | save $f --force
         } else {
             print $"(ansi yb)($f)(ansi reset)"
             print (open $f | str replace $old $"(ansi gb)($new)(ansi reset)" --all)
@@ -350,41 +382,6 @@ def check-clipboard [
 }
 
 # Put the end of a pipe into the system clipboard.
-#
-# Dependencies:
-#   - xclip on linux x11
-#   - wl-copy on linux wayland
-#   - clip.exe on windows
-#   - termux-api on termux
-#
-# Examples:
-#     put a simple string to the clipboard, will be stripped to remove ANSI sequences
-#     >_ "my wonderful string" | c
-#     my wonderful string
-#     saved to clipboard (stripped)
-#
-#     put a whole table to the clipboard
-#     >_ ls *.toml | clip
-#     ╭───┬─────────────────────┬──────┬────────┬───────────────╮
-#     │ # │        name         │ type │  size  │   modified    │
-#     ├───┼─────────────────────┼──────┼────────┼───────────────┤
-#     │ 0 │ Cargo.toml          │ file │ 5.0 KB │ 3 minutes ago │
-#     │ 1 │ Cross.toml          │ file │  363 B │ 2 weeks ago   │
-#     │ 2 │ rust-toolchain.toml │ file │ 1.1 KB │ 2 weeks ago   │
-#     ╰───┴─────────────────────┴──────┴────────┴───────────────╯
-#
-#     saved to clipboard
-#
-#     put huge structured data in the clipboard, but silently
-#     >_ open Cargo.toml --raw | from toml | clip --silent
-#
-#     when the clipboard system command is not installed
-#     >_ "mm this is fishy..." | clip
-#     Error:
-#       × clipboard_not_found:
-#       │     you are using xorg on linux
-#       │     but
-#       │     the xclip clipboard command was not found on your system.
 export def c [
     --silent (-s) # do not print the content of the clipboard to the standard output
     --no-notify  # do not throw a notification (only on linux)
@@ -446,4 +443,23 @@ def lc [] {
 
 def token [] {
    openssl rand --base64 48 | c
+}
+
+def autoweed [] {
+    let weeds = $in
+        | lines
+        | split column ":"
+        | rename package file row col function
+        | group-by file --to-table
+        | select file items.function
+        | rename file functions
+    $weeds | par-each { |weed|
+        let file = $weed.file | str trim
+        $weed.functions | each {|function|
+            let function = $function | str trim
+            print $"file: ($file) fn: ($function)"
+            r ('^\s*, ' + $function + '\n')  '' $file --write --regex
+            r ('^\s*\( ' + $function + '\n(?:\s*,\s*)?') '  ( ' $file --write --regex
+        }
+    } | ignore
 }
