@@ -166,7 +166,7 @@ alias m = micro
 alias lsa = ls -a
 alias venv = py -m virtualenv
 alias p = pnpm
-alias c = code
+alias co = code
 alias c. = code .
 alias xh = xh --verify no
 # def pointers [string] { echo $string | str find-replace -a "/(" "!(" | str find-replace -a 0x !0x | split row ! | table -n 1 }
@@ -211,23 +211,15 @@ def --env ctx [context?] {
     $env.ENV = null
 }
 def make-contexts [] {
-    gcloud container clusters get-credentials cx-dev --region us-central1 --project heb-cx-nonprod
-    gcloud container clusters get-credentials cx-cert --region us-central1 --project heb-cx-nonprod
-    gcloud container clusters get-credentials cx-preprod --region us-central1 --project heb-cx-prod
-    gcloud container clusters get-credentials cx-prod --region us-central1 --project heb-cx-prod
     gcloud container clusters get-credentials kp-dev --region us-central1 --project heb-cx-nonprod
     gcloud container clusters get-credentials kp-cert --region us-central1 --project heb-cx-nonprod
     gcloud container clusters get-credentials kp-preprod --region us-central1 --project heb-cx-prod
     gcloud container clusters get-credentials kp-prod --region us-central1 --project heb-cx-prod
 }
-alias cxd = ctx gke_heb-cx-nonprod_us-central1_cx-dev
-alias cxc = ctx gke_heb-cx-nonprod_us-central1_cx-cert
-alias cxr = ctx gke_heb-cx-prod_us-central1_cx-preprod
-alias cxp = ctx gke_heb-cx-prod_us-central1_cx-prod
-alias kpd = ctx gke_heb-cx-nonprod_us-central1_kp-dev
-alias kpc = ctx gke_heb-cx-nonprod_us-central1_kp-cert
-alias kpr = ctx gke_heb-cx-prod_us-central1_kp-preprod
-alias kpp = ctx gke_heb-cx-prod_us-central1_kp-prod
+alias d = ctx gke_heb-cx-nonprod_us-central1_kp-dev
+alias c = ctx gke_heb-cx-nonprod_us-central1_kp-cert
+alias r = ctx gke_heb-cx-prod_us-central1_kp-preprod
+alias p = ctx gke_heb-cx-prod_us-central1_kp-prod
 
 def r [old, new, files, --write(-w), --regex(-r)] {
     for f in (glob $files) {
@@ -380,6 +372,8 @@ def check-clipboard [
     }
 }
 
+export def p [] {pbpaste}
+
 # Put the end of a pipe into the system clipboard.
 export def c [
     --silent (-s) # do not print the content of the clipboard to the standard output
@@ -462,3 +456,20 @@ def autoweed [] {
         }
     } | ignore
 }
+
+def secrets [] {
+    [dev cert preprod prod] | each {|environment|
+            open $'/Users/m361234/chedr-core/infrastructure/kp-($environment)/secrets/secrets-kp-($environment).dec.yaml'
+            | get secrets.charcuterie-api
+            | each {|row| {key: $row.key, value: $row.value_enc, environment: $environment}}
+    } | flatten | group-by key
+    | transpose key data
+    | each {|r| {
+        $r.key: ($r.data | each {
+            |data| {$data.environment: $data.value}
+        } | into record)
+    }}
+    | into record
+}
+
+source local.nu
