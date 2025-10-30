@@ -49,7 +49,7 @@ def "docker kill-all" [] {
     docker ps -q | lines | each {|id| docker kill $id}
 }
 alias dka = docker kill-all
-
+alias dog = dog @1.1.1.1
 
 let carapace_completer = {|spans|
   carapace $spans.0 nushell ...$spans | from json
@@ -160,6 +160,7 @@ def --env which-open [program] { which ($program) | get path | path dirname | ex
 let ad = 'C:/Users/jon/AppData/Roaming'
 alias post = curl -X POST -H "Content-Type:application/json"
 alias ad = cd $ad
+alias a = C:\Users\jon\AppData\Local\Programs\AutoHotkey\v2\AutoHotkey64.exe
 alias pwd = echo $env.PWD
 alias cwd = echo $env.PWD
 alias m = micro
