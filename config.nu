@@ -217,10 +217,15 @@ def make-contexts [] {
     gcloud container clusters get-credentials kp-preprod --region us-central1 --project heb-cx-prod
     gcloud container clusters get-credentials kp-prod --region us-central1 --project heb-cx-prod
 }
-alias d = ctx gke_heb-cx-nonprod_us-central1_kp-dev
-alias c = ctx gke_heb-cx-nonprod_us-central1_kp-cert
-alias r = ctx gke_heb-cx-prod_us-central1_kp-preprod
-alias p = ctx gke_heb-cx-prod_us-central1_kp-prod
+alias D = ctx gke_heb-cx-nonprod_us-central1_kp-dev
+alias C = ctx gke_heb-cx-nonprod_us-central1_kp-cert
+alias R = ctx gke_heb-cx-prod_us-central1_kp-preprod
+alias P = ctx gke_heb-cx-prod_us-central1_kp-prod
+
+def Dk [] {D;k}
+def Ck [] {C;k}
+def Rk [] {R;k}
+def Pk [] {P;k}
 
 def r [old, new, files, --write(-w), --regex(-r)] {
     for f in (glob $files) {
