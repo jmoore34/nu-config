@@ -227,7 +227,7 @@ def Ck [] {C;k}
 def Rk [] {R;k}
 def Pk [] {P;k}
 
-def r [old, new, files, --write(-w), --regex(-r)] {
+def replace [old, new, files, --write(-w), --regex(-r)] {
     for f in (glob $files) {
         if $write {
             # rg --regexp $old --replace $new $f | save $f --force
@@ -457,8 +457,8 @@ def autoweed [] {
         $weed.functions | each {|function|
             let function = $function | str trim
             print $"file: ($file) fn: ($function)"
-            r ('^\s*, ' + $function + '\n')  '' $file --write --regex
-            r ('^\s*\( ' + $function + '\n(?:\s*,\s*)?') '  ( ' $file --write --regex
+            replace ('^\s*, ' + $function + '\n')  '' $file --write --regex
+            replace ('^\s*\( ' + $function + '\n(?:\s*,\s*)?') '  ( ' $file --write --regex
         }
     } | ignore
 }
@@ -477,5 +477,3 @@ def secrets [] {
     }}
     | into record
 }
-
-source local.nu
