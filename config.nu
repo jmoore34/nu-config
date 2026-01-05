@@ -11,9 +11,8 @@ def HTTP [
     --verbose(-v) # Print all debug information to stdout
     --full(-f) # returns the full response instead of only the body
     --raw(-r) # fetch contents as text rather than a table
-    --read-only-token # use the read only token
 ] {
-    let token = if $read_only_token {$env.READ_ONLY_TOKEN?} else {$env.COSTXP_TOKEN}
+    let token = $env.CHEDR_ADMIN_TOKEN
     let augmented_headers = {Authorization: $token} | merge ($headers | default {})
     let path = $env.HOST + "/" + ($url | str replace -r ^/ "")
     request $method $path --insecure --json=$json --headers=$augmented_headers --query-params=$query_params --extra-curl-params=$extra_curl_params --print-curl-command=$print_curl_command --verbose=$verbose --full=$full --raw=$raw
