@@ -190,14 +190,22 @@ def --wrapped kubectl [...args] {
 
 def check-auth [] {
     (
-        if not (^kubectl -n chedr get pods | str contains "coco") {
-        gcloud auth login
-    }) | ignore
+        try {
+            ^kubectl auth whoami
+        } catch {
+            gcloud auth login
+        }
+    ) | ignore
 }
 
 def k [] {
     check-auth
     kubetui --namespaces chedr --split-direction horizontal
+}
+
+def K [] {
+    check-auth
+    lfk -n chedr
 }
 
 alias kc = kubectl -n chedr
