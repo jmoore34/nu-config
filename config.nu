@@ -92,7 +92,7 @@ $env.config.keybindings ++= [
             mode: emacs
             event: [{
                 send: executehostcommand
-                cmd: $"source /Users/m361234/repl/repl.nu"
+                cmd: $"source /Users/m361234/chedr-core/scripts/local/repl.nu"
             }]
         }
         {
