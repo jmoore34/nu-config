@@ -61,8 +61,8 @@ $env.config.completions = {
             completer: $carapace_completer
         }
     }
-$env.config.history.isolation = true
 $env.config.history.file_format = 'sqlite'
+$env.config.history.isolation = true
 $env.config.show_banner = false
 $env.config.keybindings ++= [
         {

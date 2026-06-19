@@ -1,4 +1,5 @@
 export def show_banner [] {
+    if $nu.is-lsp { return }
     let ellie = [
         "     __  ,"
         " .--()°'.'"
