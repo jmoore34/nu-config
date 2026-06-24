@@ -18,6 +18,25 @@ def HTTP [
     request $method $path --insecure --json=$json --headers=$augmented_headers --query-params=$query_params --extra-curl-params=$extra_curl_params --print-curl-command=$print_curl_command --verbose=$verbose --full=$full --raw=$raw
 }
 
+def sprint [] {
+    let tickets = jira sprint list --current --jql 'assignee = currentUser()' --plain --delimiter '|'
+        | from csv --separator '|'
+
+    let sprintName = jira issue view ($tickets.0.KEY) --raw
+        | from json
+        | get fields.customfield_10010.0.name
+
+    let sprintNumber = $sprintName | parse --regex '(?P<number>[0-9]+)' | last | get number
+
+    let ticketText = $tickets
+        | each { $"# ($in.KEY)\n* ($in.SUMMARY)\n"}
+        | str join "\n"
+
+    $"% Jonathan Moore\n% CHEDR Sprint ($sprintNumber)\n\n($ticketText)" | c
+
+    code $"/Users/m361234/Documents/sprint($sprintNumber).md"
+}
+
 def debug-cleanup-hs [] {
     ls **/*.hs
     | each { |file|
