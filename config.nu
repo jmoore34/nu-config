@@ -58,8 +58,8 @@ alias pull = git pull
 alias h = cd ~
 alias cc = cd /Users/m361234/chedr-core
 alias ll = ls -l
-def l [] { ls | grid -ci }
-def la [] { ls -a | grid -ci }
+def l [] { ls | grid -ci name }
+def la [] { ls -a | grid -ci name }
 def dps [] { docker ps | from ssv }
 def dls [] { docker image ls | from ssv }
 # Kill all running Docker containers
@@ -208,13 +208,9 @@ def --wrapped kubectl [...args] {
 }
 
 def check-auth [] {
-    (
-        try {
-            ^kubectl auth whoami
-        } catch {
-            gcloud auth login
-        }
-    ) | ignore
+    if not (^kubectl auth whoami | str contains "authenticated") {
+        gcloud auth login
+    }
 }
 
 def k [] {

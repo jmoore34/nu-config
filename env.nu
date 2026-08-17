@@ -41,7 +41,7 @@ if $nu.os-info.name != windows {
     $env.PROJECT_DIR = '/Users/m361234/chedr-core'
     $env.GITHUB_USER = 'jon'
     $env.PNPM_HOME = '/Users/m361234/Library/pnpm'
-    $env.PATH ++= [
+    $env.PATH = [
         /opt/homebrew/bin
         /Users/m361234/Library/pnpm
         /Users/m361234/.ghcup/bin
@@ -50,7 +50,10 @@ if $nu.os-info.name != windows {
         /Users/m361234/.local/bin
         /Users/m361234/repl
         /Applications/Docker.app/Contents/Resources/bin
-    ]
+    ] ++ $env.PATH
     $env.USE_GKE_GCLOUD_AUTH_PLUGIN = true
     $env.CHEDR_DIR = '/Users/m361234/chedr-core'
+    $env.LIBRARY_PATH = "/opt/homebrew/Cellar/odpi/5.3.0/lib:/usr/local/lib" # replace 5.3.0 with your version
+    $env.LD_LIBRARY_PATH = $env.LIBRARY_PATH
+    $env.DYLD_LIBRARY_PATH = $env.LIBRARY_PATH
 }
