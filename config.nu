@@ -69,16 +69,18 @@ def "docker kill-all" [] {
 alias dka = docker kill-all
 alias dog = dog @1.1.1.1
 
-let carapace_completer = {|spans|
-  carapace $spans.0 nushell ...$spans | from json
+def carapace-update [] {
+    $env.CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense' # optional
+    mkdir $"($nu.cache-dir)"
+    carapace _carapace nushell | save --force $"($nu.cache-dir)/carapace.nu"
 }
+
+# ${UserConfigDir}/nushell/config.nu
+source $"($nu.cache-dir)/carapace.nu"
+
 $env.config.completions = {
         quick: false  # set this to false to prevent auto-selecting completions when only one remains
         algorithm: "fuzzy"  # prefix or fuzzy
-        external: {
-            enable: true # set to false to prevent nushell looking into $env.PATH to find more suggestions, `false` recommended for WSL users as this look up my be very slow
-            completer: $carapace_completer
-        }
     }
 $env.config.history.file_format = 'sqlite'
 $env.config.history.isolation = true
