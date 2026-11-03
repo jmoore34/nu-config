@@ -157,15 +157,15 @@ $env.config.keybindings ++= [
         }
     ]
 $env.config.hooks = {
-        env_change: {
-            PWD: [
-                { |before, after|
-                    if $before != null {
-                        print (l) -n
-                    }
-                }
-            ]
-        }
+        # env_change: {
+        #     PWD: [
+        #         { |before, after|
+        #             if $before != null {
+        #                 print (l) -n
+        #             }
+        #         }
+        #     ]
+        # }
         display_output: { ||
             if (term size).columns >= 80 { table -e } else { table }
         }
